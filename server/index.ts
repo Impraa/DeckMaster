@@ -1,5 +1,6 @@
 import express, { Express, Request, Response , Application } from 'express';
 import dotenv from 'dotenv';
+import { sequelize } from './utils/database';
 
 dotenv.config();
 
@@ -11,5 +12,9 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.listen(port, () => {
+  sequelize
+    .sync()
+    .then(() => console.log('Connected to db successfuly'))
+    .catch((e) => console.error(`Could not connect to db cause of ${e}`))
   console.log(`Server is Fire at http://localhost:${port}`);
 });
