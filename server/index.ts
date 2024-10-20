@@ -1,6 +1,7 @@
 import express, { Express, Request, Response , Application } from 'express';
 import dotenv from 'dotenv';
 import { sequelize } from './utils/database';
+import User from './routes/User';
 
 dotenv.config();
 
@@ -10,6 +11,11 @@ const port = process.env.PORT || 8000;
 app.get('/', (req: Request, res: Response) => {
   res.send('Welcome to Express & TypeScript Server');
 });
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "10mb" }));
+
+app.use("/user", User);
 
 app.listen(port, () => {
   sequelize
