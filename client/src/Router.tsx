@@ -1,5 +1,4 @@
-function App() {
-
+function Router() {
   return (
     <>
     <p>WORKS!</p>
@@ -7,4 +6,4 @@ function App() {
   )
 }
 
-export default App
+export default Router
