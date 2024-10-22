@@ -3,16 +3,17 @@ import dotenv from 'dotenv';
 dotenv.config({});
 
 import express, { Request, Response } from 'express';
-import { isValidUser, IUser } from '../../types/user';
+import { isValidLoginUser, isValidRegisterUser, IUser } from '../../types/user';
 import bcrypt from 'bcrypt';
 import User from '../models/User';
 import Jwt from "jsonwebtoken";
+import { Model } from 'sequelize';
 
 const router = express.Router();
 
 router.post('/register', async (req: Request, res: Response) => {
     try {
-        if (!isValidUser(req.body))
+        if (!isValidRegisterUser(req.body))
         {
             res.status(400).send('User is missing some manditory fields check and try again');    
             return;
@@ -25,11 +26,33 @@ router.post('/register', async (req: Request, res: Response) => {
             email: email
         };
         const user = await User.create(userData);
-        const token = Jwt.sign(user.dataValues, process.env.SECRET || "tajna", { expiresIn: "1h" }).toString();
-        res.status(200).cookie("USER_TOKEN", token, { secure: true, httpOnly: true, maxAge: 86_400_000 }).json(user.dataValues);
+        const token = Jwt.sign(user.dataValues, process.env.SECRET || "tajna", { expiresIn: "24h" });
+        res.status(201).cookie("USER_TOKEN", token, { secure: true, httpOnly: true, maxAge: 86_400_000 }).json(user.dataValues);
     } catch (error) {
         res.status(500).send(`Server error - ${error}`)
     }
 });
+
+router.post('/login', async (req: Request, res: Response) => {
+    try {
+        if (isValidLoginUser(req.body))
+        {
+            res.status(400).send('User is missing some manditory fields check and try again');    
+            return;
+        }
+        const { email, username, password, rememberMe } = req.body;
+        const user = (await User.findOne({ where: email ? { email: email } : { username: username } })) as Model<IUser>;
+        if (!bcrypt.compareSync(password, user.dataValues.password))
+        {
+            res.status(404).json("Email or password incorrect");
+            return;
+        }
+        const token = Jwt.sign(user.dataValues, process.env.SECRET || "tajna", { expiresIn: !rememberMe ? "24h" : "1week"});
+        res.status(200).cookie("USER_TOKEN", token,
+            { secure: true, httpOnly: true, maxAge: !rememberMe ? 86_400_000 : 7 * 86_400_000 }).json(user.dataValues);
+    } catch (error) {
+        res.status(500).send(`Server error - ${error}`)
+    }
+})
 
 export default router;
