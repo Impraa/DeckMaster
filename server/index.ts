@@ -2,20 +2,23 @@ import express, { Express, Request, Response , Application } from 'express';
 import dotenv from 'dotenv';
 import { sequelize } from './utils/database';
 import User from './routes/User';
+import cors from 'cors';
 
 dotenv.config();
 
 const app: Application = express();
 const port = process.env.PORT || 8000;
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Welcome to Express & TypeScript Server');
-});
+app.use(cors({ credentials: true, origin: ["http://127.0.0.1:5173", "http://localhost:5173"], }));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: "10mb" }));
 
 app.use("/user", User);
+
+app.all("*", (req: Request, res: Response) => {
+  res.status(404).send("Method not found");
+});
 
 app.listen(port, () => {
   sequelize

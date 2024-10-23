@@ -24,7 +24,6 @@ const LoginForm = () => {
         setFormData({...formData, password: value});
     }
     
-
     return (
         <>
             <form onSubmit={handleSubmit} className="flex flex-col w-[50%]">
