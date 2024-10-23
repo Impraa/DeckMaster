@@ -1,15 +1,17 @@
 export interface IUser{
     id: number,
+    role: 'USER' | 'ADMIN',
     username: string,
     email: string,
     password:string,
 }
 
-export type LoginUser = Omit<IUser, 'id'> & { rememberMe: boolean };
+export type LoginUser = Omit<IUser, 'id' | 'role'> & { rememberMe: boolean };
 
 export const isValidUser = (user: IUser): user is IUser => {
-    const { id, email, password, username } = user;
-    return typeof id === 'number' && typeof email === 'string' && typeof password === 'string' && typeof username === 'string';
+    const { id, role, email, password, username } = user;
+    return typeof id === 'number' && typeof email === 'string' && typeof password === 'string'
+        && typeof username === 'string' && typeof role === 'string';
 }
 
 export const isValidRegisterUser = (user: Omit<IUser, 'id'>): user is IUser => {

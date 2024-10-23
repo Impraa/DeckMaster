@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config({});
 
 import express, { Request, Response } from 'express';
-import { isValidLoginUser, isValidRegisterUser, IUser } from '../../types/user';
+import { isValidLoginUser, isValidRegisterUser, IUser, LoginUser } from '../../types/user';
 import bcrypt from 'bcrypt';
 import User from '../models/User';
 import Jwt from "jsonwebtoken";
@@ -22,7 +22,7 @@ router.post('/register', async (req: Request, res: Response) => {
 
         const { username, email, password } = req.body;
         const hashedPassword = bcrypt.hashSync(password, 10);
-        const userData: Omit<IUser, 'id'> = {
+        const userData: Omit<LoginUser,'rememberMe'> = {
             username: username,
             password: hashedPassword,
             email: email
