@@ -8,6 +8,7 @@ import bcrypt from 'bcrypt';
 import User from '../models/User';
 import Jwt from "jsonwebtoken";
 import { Model } from 'sequelize';
+import { authenticateJWT } from '../utils/middelware';
 
 const router = express.Router();
 
@@ -18,6 +19,7 @@ router.post('/register', async (req: Request, res: Response) => {
             res.status(400).json('Some required fields are not filled, check and try again.');    
             return;
         }
+
         const { username, email, password } = req.body;
         const hashedPassword = bcrypt.hashSync(password, 10);
         const userData: Omit<IUser, 'id'> = {
@@ -25,10 +27,14 @@ router.post('/register', async (req: Request, res: Response) => {
             password: hashedPassword,
             email: email
         };
+
         const user = await User.create(userData);
         const token = Jwt.sign(user.dataValues, process.env.SECRET || "tajna", { expiresIn: "24h" });
+
         res.status(201).cookie("USER_TOKEN", token, { secure: true, httpOnly: true, maxAge: 86_400_000 }).json(user.dataValues);
-    } catch (error) {
+    } 
+    catch (error) 
+    {
         res.status(500).json('Email or password incorrect, please try again.')
     }
 });
@@ -40,19 +46,30 @@ router.post('/login', async (req: Request, res: Response) => {
             res.status(400).json('Some required fields are not filled, check and try again.');    
             return;
         }
+
         const { email, username, password, rememberMe } = req.body;
         const user = (await User.findOne({ where: email ? { email: email } : { username: username } })) as Model<IUser>;
+
         if (!bcrypt.compareSync(password, user.dataValues.password))
         {
             res.status(404).json("Email or password incorrect");
             return;
         }
+
         const token = Jwt.sign(user.dataValues, process.env.SECRET || "tajna", { expiresIn: !rememberMe ? "24h" : "1week"});
         res.status(200).cookie("USER_TOKEN", token,
             { secure: true, httpOnly: true, maxAge: !rememberMe ? 86_400_000 : 7 * 86_400_000 }).json(user.dataValues);
-    } catch (error) {
+    } 
+    catch (error) 
+    {
         res.status(500).json('Email or password incorrect, please try again.')
     }
+})
+
+router.post('/refresh', authenticateJWT, (req: Request, res: Response) => {
+    const userData = Jwt.verify(req.cookies['USER_TOKEN'], process.env.SECRET || "tajna");
+
+    res.status(200).json({"message" : "User verified successfully", "user" : userData});
 })
 
 export default router;
