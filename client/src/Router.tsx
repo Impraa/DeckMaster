@@ -1,3 +1,4 @@
+import Navbar from "@layout/Navbar";
 import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 
@@ -7,6 +8,7 @@ const Login = lazy(() => import("@pages/Login"));
 function Router() {
   return (
     <Suspense>
+      <Navbar/>
       <Routes>
         <Route index element={<Home/>}/> 
         <Route path="/login" element={<Login/>} />
