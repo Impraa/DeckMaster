@@ -15,7 +15,7 @@ router.post('/register', async (req: Request, res: Response) => {
     try {
         if (!isValidRegisterUser(req.body))
         {
-            res.status(400).send('User is missing some manditory fields check and try again');    
+            res.status(400).json('User is missing some manditory fields check and try again');    
             return;
         }
         const { username, email, password } = req.body;
@@ -29,15 +29,15 @@ router.post('/register', async (req: Request, res: Response) => {
         const token = Jwt.sign(user.dataValues, process.env.SECRET || "tajna", { expiresIn: "24h" });
         res.status(201).cookie("USER_TOKEN", token, { secure: true, httpOnly: true, maxAge: 86_400_000 }).json(user.dataValues);
     } catch (error) {
-        res.status(500).send(`Server error - ${error}`)
+        res.status(500).json(`Server error - ${error}`)
     }
 });
 
 router.post('/login', async (req: Request, res: Response) => {
     try {
-        if (isValidLoginUser(req.body))
+        if (!isValidLoginUser(req.body))
         {
-            res.status(400).send('User is missing some manditory fields check and try again');    
+            res.status(400).json('User is missing some manditory fields check and try again');    
             return;
         }
         const { email, username, password, rememberMe } = req.body;
@@ -51,7 +51,7 @@ router.post('/login', async (req: Request, res: Response) => {
         res.status(200).cookie("USER_TOKEN", token,
             { secure: true, httpOnly: true, maxAge: !rememberMe ? 86_400_000 : 7 * 86_400_000 }).json(user.dataValues);
     } catch (error) {
-        res.status(500).send(`Server error - ${error}`)
+        res.status(500).json(`Server error - ${error}`)
     }
 })
 

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { LoginUser} from '../../../types/user';
+import { loginUserAsync } from "@services/User";
 
 const LoginForm = () => {
     const [formData, setFormData] = useState<LoginUser>({
@@ -9,9 +10,10 @@ const LoginForm = () => {
         rememberMe: false,
       });
 
-    const handleSubmit = (e:  React.ChangeEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e:  React.ChangeEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(formData)
+        const response = await loginUserAsync(formData);
+        console.log(response);
     }
 
     const handleIDChange = (e:  React.ChangeEvent<HTMLInputElement>) => {

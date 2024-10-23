@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import { sequelize } from './utils/database';
 import User from './routes/User';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
@@ -10,6 +11,7 @@ const app: Application = express();
 const port = process.env.PORT || 8000;
 
 app.use(cors({ credentials: true, origin: ["http://127.0.0.1:5173", "http://localhost:5173"], }));
+app.use(cookieParser());
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: "10mb" }));
