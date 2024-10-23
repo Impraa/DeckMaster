@@ -30,5 +30,5 @@ export const refreshUserAsync = () => {
         if(!response.ok) return { error: true, data: data};
         else return { error: false, data: data};
         })
-      .catch((e) => console.error(e));
+      .catch((e) => ({ error: true, data: e}));
 }
