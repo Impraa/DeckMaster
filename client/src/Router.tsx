@@ -8,7 +8,8 @@ import useCallContext from "@hooks/useCallContext";
 
 const Home = lazy(() => import("@pages/Home"));
 const Login = lazy(() => import("@pages/Login"));
- 
+const EditProfile = lazy(() => import("@pages/EditProfile")); 
+
 function Router() {
 
   const userContext = useCallContext(UserContext);
@@ -33,7 +34,8 @@ function Router() {
       <Navbar/>
       <Routes>
         <Route index element={<Home/>}/> 
-        <Route path="/login" element={<Login/>} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/edit-profile/:id" element={<EditProfile />} />
       </Routes>
     </Suspense>
   )
