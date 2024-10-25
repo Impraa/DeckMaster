@@ -13,7 +13,8 @@ import { authenticateJWT } from '../utils/middelware';
 const router = express.Router();
 
 router.post('/register', async (req: Request, res: Response) => {
-    try {
+    try
+    {
         if (!isValidRegisterUser(req.body))
         {
             res.status(400).json('Some required fields are not filled, check and try again.');    
@@ -40,7 +41,8 @@ router.post('/register', async (req: Request, res: Response) => {
 });
 
 router.post('/login', async (req: Request, res: Response) => {
-    try {
+    try
+    {
         if (!isValidLoginUser(req.body))
         {
             res.status(400).json('Some required fields are not filled, check and try again.');    
@@ -62,7 +64,7 @@ router.post('/login', async (req: Request, res: Response) => {
     } 
     catch (error) 
     {
-        res.status(500).json('Email or password incorrect, please try again.')
+        res.status(500).json('Email or password incorrect, please try again.');
     }
 })
 
@@ -71,5 +73,25 @@ router.post('/refresh', authenticateJWT, (req: Request, res: Response) => {
 
     res.status(200).json({"message" : "User verified successfully", "user" : userData});
 })
+
+router.get('/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    if (!id)
+    {
+        res.status(400).json('Id has not been provided');
+        return;
+    }
+
+    try
+    {
+        const user = (await User.findOne({ where: { id: id } })) as Model<IUser>;
+        
+        res.status(200).json(user.dataValues);
+    }
+    catch (error) {
+        res.status(400).json('User is nonexistant, please try again.');
+    }
+}) 
 
 export default router;
