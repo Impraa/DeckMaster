@@ -13,11 +13,16 @@ const Navbar = () => {
             <div className="space-x-4">
                 {
                     userContext && userContext.user ? 
-                    (<p>Hello, {userContext.user.username}</p>) :
-                    (<>
-                    <Link URL="/login">Login</Link>
-                    <Link URL="/register">Register</Link>
-                    </>)
+                        (
+                            <>
+                                <p>Hello, {userContext.user.username}</p>
+                                <button onClick={() => {userContext.logoutUser()}}>Logout</button>
+                            </>
+                        ) :
+                        (<>
+                            <Link URL="/login">Login</Link>
+                            <Link URL="/register">Register</Link>
+                        </>)
                 }
                 
             </div>
