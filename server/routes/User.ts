@@ -74,6 +74,10 @@ router.post('/refresh', authenticateJWT, (req: Request, res: Response) => {
     res.status(200).json({"message" : "User verified successfully", "user" : userData});
 })
 
+router.delete('/logout', authenticateJWT, async (req: Request, res: Response) => {
+    res.clearCookie('USER_TOKEN').status(200).json('User has been logged out');
+})
+
 router.get('/:id', async (req: Request, res: Response) => {
     const { id } = req.params;
 
