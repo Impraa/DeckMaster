@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config({});
 
 import express, { Request, Response } from 'express';
-import { isValidLoginUser, isValidRegisterUser, IUser, LoginUser } from '../../types/user';
+import { isValidLoginUser, isValidRegisterUser, isValidUpdateUser, isValidUser, IUser, LoginUser, Optional } from '../../types/user';
 import bcrypt from 'bcrypt';
 import User from '../models/User';
 import Jwt from "jsonwebtoken";
@@ -97,5 +97,57 @@ router.get('/:id', async (req: Request, res: Response) => {
         res.status(400).json('User is nonexistant, please try again.');
     }
 }) 
+
+router.put('/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    if (!id)
+    {
+        res.status(400).json('Id has not been provided');
+        return;
+    }
+
+    try
+    {
+        if (!isValidUpdateUser(req.body))
+        {
+            res.status(400).json('Some required fields are not filled, check and try again.');    
+            return;
+        }
+
+        const { username, email, oldPassword, newPassword } = req.body;
+        const userData: Optional<Omit<LoginUser,'rememberMe'>, 'password'> = {
+            username: username,
+            email: email,
+        };
+
+        if (oldPassword && newPassword)
+        {
+            const user = (await User.findOne({ where: { email: email }})) as Model<IUser>;
+
+            if (!bcrypt.compareSync(oldPassword, user.dataValues.password))
+            {
+                res.status(404).json("Email or password incorrect");
+                return;
+            }
+
+            const newHashedPassword = bcrypt.hashSync(newPassword, 10);
+
+            userData.password = newHashedPassword;
+        }
+        
+        await User.update(userData, { where: { id: id } });
+
+        const user = (await User.findOne({ where: { email: email }})) as Model<IUser>;
+
+        const token = Jwt.sign(user.dataValues, process.env.SECRET || "tajna", { expiresIn: "24h" });
+
+        res.status(201).cookie("USER_TOKEN", token, { secure: true, httpOnly: true, maxAge: 86_400_000 }).json(user.dataValues);
+    } 
+    catch (error) 
+    {
+        res.status(500).json('Email or password incorrect, please try again.')
+    }
+})
 
 export default router;
