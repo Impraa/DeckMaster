@@ -3,7 +3,7 @@ import useCallContext from "@hooks/useCallContext";
 import { useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import { IUser } from "../../../types/user";
-import { fetchSingleUser } from "@services/User";
+import { fetchSingleUserAsync } from "@services/User";
 
 const Profile = () => {
     const userContext = useCallContext(UserContext);
@@ -11,7 +11,7 @@ const Profile = () => {
     const [foundUser, setFoundUser] = useState<IUser | null>(null);
     
     const findUser = async (id: number) => {
-        const response = await fetchSingleUser(id);
+        const response = await fetchSingleUserAsync(id);
         console.log(response);
         if (!response.error) setFoundUser(response.data.user);
     }
