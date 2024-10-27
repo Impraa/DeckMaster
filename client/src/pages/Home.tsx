@@ -1,6 +1,8 @@
+import { Link } from "react-router-dom";
+
 const Home = () => {
   return (
-  <div>Home</div>
+  <div>Home <Link to={'/edit-profile/1'}>profil</Link></div>
   );
 };
 

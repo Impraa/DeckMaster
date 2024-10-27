@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { IUpdateUserData, IUser } from "../../../types/user";
-import { Navigate } from "react-router-dom";
 
-const EditProfileForm: React.FC<{user: IUser, updateUser: (id: number, formData: IUpdateUserData) => void}> = ({user, updateUser}) => {
+const EditProfileForm: React.FC<{user: IUser | null, updateUser: (id: number, formData: IUpdateUserData) => void}> = ({user, updateUser}) => {
   
     const [formData, setFormData] = useState<(IUpdateUserData & { confirmNewPassword?: string })>(
         {
-            email: user.email,
-            username: user.username,
+            email: user ? user.email : '',
+            username: user ? user.username : '',
         });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -19,18 +18,18 @@ const EditProfileForm: React.FC<{user: IUser, updateUser: (id: number, formData:
         e.preventDefault();
         console.log(formData);
         const { oldPassword, newPassword, confirmNewPassword } = formData;
-        if (oldPassword) {
-            if (!newPassword || !confirmNewPassword) console.log('fale nove sifre');
-            else if (newPassword !== confirmNewPassword) console.log('nove sifre se ne podudaraju');
-            else {
-                delete formData.confirmNewPassword;
-                updateUser(user.id, formData);
-                return <Navigate to={`/edit-profile/${user.id}`} />
+        if (user) {
+            if (oldPassword) {
+                if (!newPassword || !confirmNewPassword) console.log('fale nove sifre');
+                else if (newPassword !== confirmNewPassword) console.log('nove sifre se ne podudaraju');
+                else {
+                    delete formData.confirmNewPassword;
+                    await updateUser(user.id, formData);
+                }
             }
-        }
-        else {
-            updateUser(user.id, formData);
-            return <Navigate to={`/edit-profile/${user.id}`} />
+            else {
+                updateUser(user.id, formData);
+            }
         }
     }
 
