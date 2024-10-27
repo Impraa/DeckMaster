@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config({});
 
 import express, { Request, Response } from 'express';
-import { isValidLoginUser, isValidRegisterUser, isValidUpdateUser, isValidUser, IUser, LoginUser, Optional } from '../../types/user';
+import { isValidLoginUser, isValidRegisterUser, isValidUpdateUser, isValidUser, IUpdateUserData, IUser, LoginUser, Optional } from '../../types/user';
 import bcrypt from 'bcrypt';
 import User from '../models/User';
 import Jwt from "jsonwebtoken";
@@ -116,7 +116,7 @@ router.put('/:id', async (req: Request, res: Response) => {
         }
 
         const { username, email, oldPassword, newPassword } = req.body;
-        const userData: Optional<Omit<LoginUser,'rememberMe'>, 'password'> = {
+        const userData: IUpdateUserData = {
             username: username,
             email: email,
         };

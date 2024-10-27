@@ -6,6 +6,8 @@ export interface IUser{
     password:string,
 }
 
+export interface IUpdateUserData extends Optional<Omit<LoginUser, 'rememberMe'>, 'password'> {};
+
 export type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
 
 export type LoginUser = Omit<IUser, 'id' | 'role'> & { rememberMe: boolean };
