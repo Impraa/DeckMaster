@@ -1,9 +1,22 @@
 import { useState } from "react";
 import { LoginUser} from '../../../types/user';
-import { loginUserAsync } from "@services/User";
-import { Navigate } from "react-router-dom";
+import { UserContext } from "@context/UserContext";
+import useCallContext from "@hooks/useCallContext";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
+    const userContext = useCallContext(UserContext);
+    const navigate = useNavigate();
+  
+    useEffect(() => {
+        if(userContext && userContext.user) 
+        {
+            navigate('/');
+            return;
+        }
+    },[navigate, userContext]);
+
     const [formData, setFormData] = useState<LoginUser>({
         username: "",
         email: "",
@@ -13,13 +26,7 @@ const LoginForm = () => {
 
     const handleSubmit = async (e:  React.ChangeEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const response = await loginUserAsync(formData);
-        console.log(response);
-        if(!response.error)
-        { 
-            <Navigate to={'/'} />;
-            return ;
-        }
+        if(userContext) userContext.loginUser(formData);
     }
 
     const handleIDChange = (e:  React.ChangeEvent<HTMLInputElement>) => {

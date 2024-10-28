@@ -1,10 +1,23 @@
 import { useState } from "react";
 import { IUser } from "../../../types/user";
-import { registerUserAsync } from "@services/User";
-import { Navigate } from "react-router-dom";
+import { UserContext } from "@context/UserContext";
+import useCallContext from "@hooks/useCallContext";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const RegisterForm = () => {
-    
+
+    const userContext = useCallContext(UserContext);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if(userContext && userContext.user) 
+        {
+            navigate('/');
+            return;
+        }
+    },[navigate, userContext]);
+
     const [formData, setFormData] = useState<Omit<IUser, 'id' | 'role'> & { confirmPassword?: string }>({
         username: "",
         email: "",
@@ -21,8 +34,7 @@ const RegisterForm = () => {
         if(!formData.confirmPassword) console.log('Password not confirmed');
         if(formData.confirmPassword !== formData.password) console.log("Password's are not matching");
         delete formData.confirmPassword;
-        const response = await registerUserAsync(formData);
-        if(!response.error) return <Navigate to={'/'} />
+        if(userContext) userContext.registerUser(formData);
     }
 
     return (

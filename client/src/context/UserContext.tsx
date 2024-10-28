@@ -1,7 +1,7 @@
 import { IUserContextValue } from "@/types/contextTypes";
 import React, { createContext, useLayoutEffect, useState } from "react";
-import { isValidUser, IUpdateUserData, IUser } from "../../../types/user";
-import { logoutUserAsync, refreshUserAsync, updateUserAsync } from "@services/User";
+import { isValidUser, IUpdateUserData, IUser, LoginUser } from "../../../types/user";
+import { loginUserAsync, logoutUserAsync, refreshUserAsync, registerUserAsync, updateUserAsync } from "@services/User";
 
 export const UserContext = createContext<IUserContextValue | null>(null);
 
@@ -28,6 +28,26 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     }
   }, [user])
 
+  const loginUser = async (formData: LoginUser) => {
+    setIsLoading(true);
+    const response = await loginUserAsync(formData);
+    if(!response.error)
+    {
+      setIsLoading(false);
+      setUser(response.data.user);
+    }
+  }
+
+  const registerUser = async (formData: Omit<IUser, 'id' | 'role'>) => {
+    setIsLoading(true);
+    const response = await registerUserAsync(formData);
+    if(!response.error)
+    {
+      setIsLoading(false);
+      setUser(response.data.user);
+    }
+  }
+
   const logoutUser = async () => {
     setIsLoading(true);
     const response = await logoutUserAsync();
@@ -45,7 +65,7 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     setIsLoading(false)
   }
 
-  const value = React.useMemo( () => ({ user, setUser, isLoading, setIsLoading, logoutUser, updateUser }), [user, isLoading] );
+  const value = React.useMemo( () => ({ user, setUser, isLoading, setIsLoading, logoutUser, updateUser, loginUser, registerUser }), [user, isLoading] );
 
   return <UserContext.Provider value={value}> {children} </UserContext.Provider>;
 };
