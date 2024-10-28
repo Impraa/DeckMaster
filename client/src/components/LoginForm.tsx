@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { LoginUser} from '../../../types/user';
 import { loginUserAsync } from "@services/User";
+import { Navigate } from "react-router-dom";
 
 const LoginForm = () => {
     const [formData, setFormData] = useState<LoginUser>({
@@ -14,6 +15,11 @@ const LoginForm = () => {
         e.preventDefault();
         const response = await loginUserAsync(formData);
         console.log(response);
+        if(!response.error)
+        { 
+            <Navigate to={'/'} />;
+            return ;
+        }
     }
 
     const handleIDChange = (e:  React.ChangeEvent<HTMLInputElement>) => {

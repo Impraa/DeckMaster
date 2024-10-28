@@ -1,4 +1,4 @@
-import { IUpdateUserData, LoginUser } from "../../../types/user"
+import { IUpdateUserData, IUser, LoginUser } from "../../../types/user"
 
 export const loginUserAsync = (formData: LoginUser) => {
     return fetch(`http://localhost:8000/user/login`, {
@@ -14,7 +14,24 @@ export const loginUserAsync = (formData: LoginUser) => {
         if(!response.ok) return { error: true, data: data};
         else return { error: false, data: data};
         })
-      .catch((e) => console.error(e));
+      .catch((e) => ({ error: true, data: e}));
+}
+
+export const registerUserAsync = (formData: Omit<IUser, 'id' | 'role'>) => {
+  return fetch(`http://localhost:8000/user/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+      credentials: "include",
+    })
+    .then(async (response) => { 
+      const data = await response.json();
+      if(!response.ok) return { error: true, data: data};
+      else return { error: false, data: data};
+      })
+    .catch((e) => ({ error: true, data: e}));
 }
 
 export const refreshUserAsync = () => {
