@@ -15,7 +15,7 @@ const Navbar = () => {
                     userContext && userContext.user ? 
                         (
                             <>
-                                <p>Hello, {userContext.user.username}</p>
+                                <p>Hello, <Link URL={`/profile/${userContext.user.id}`} >{userContext.user.username}</Link></p>
                                 <button onClick={() => {userContext.logoutUser()}}>Logout</button>
                             </>
                         ) :

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import { IUser } from "../../../types/user";
 import { fetchSingleUserAsync } from "@services/User";
+import Link from "@components/Link";
 
 const Profile = () => {
     const userContext = useCallContext(UserContext);
@@ -23,7 +24,10 @@ const Profile = () => {
         <div>
             Profile
             {userContext && userContext.user && userContext.user.id === +id ?
-                (<div>Your profile</div>)
+                (<div>
+                    Your profile
+                    <Link URL={`/edit-profile/${userContext.user.id}`}>Edit profile</Link>
+                </div>)
                 : (<></>)}
         </div>
     )
