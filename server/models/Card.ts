@@ -35,6 +35,10 @@ const Card = sequelize.define("cards", {
         type: DataTypes.STRING,
         allowNull: true,
     },
+    attribute: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
     atk: {
         type: DataTypes.STRING,
         allowNull: true,

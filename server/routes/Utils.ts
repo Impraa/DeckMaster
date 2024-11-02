@@ -61,6 +61,7 @@ router.post('/migrate-cards', async (req: Request, res: Response) => {
                 cardText: cardData.desc,
                 race: cardData.race,
                 archetype: cardData.archetype,
+                attribute: cardData.attribute ?? null,
                 banTcg: cardData.banlist_info ? cardData.banlist_info.ban_tcg : null,
                 banOcg: cardData.banlist_info ? cardData.banlist_info.ban_ocg : null,
                 banGoat: cardData.banlist_info ? cardData.banlist_info.ban_goat : null,
