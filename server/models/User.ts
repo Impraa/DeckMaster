@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../utils/database";
+import Decklist from "./Decklist";
 
 const User = sequelize.define("users", {
   id: {
@@ -27,5 +28,7 @@ const User = sequelize.define("users", {
     defaultValue: 'USER'
   }
 });
+
+User.belongsToMany(Decklist, { through: 'user_decklist' });
 
 export default User;
