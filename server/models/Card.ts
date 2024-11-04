@@ -71,5 +71,7 @@ const Card = sequelize.define("cards", {
 });
 
 Card.belongsToMany(Decklist, { through: 'card_decklist' });
+Decklist.belongsToMany(Card, { through: 'card_decklist' });
+
 
 export default Card;

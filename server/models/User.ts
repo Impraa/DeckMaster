@@ -30,5 +30,6 @@ const User = sequelize.define("users", {
 });
 
 User.belongsToMany(Decklist, { through: 'user_decklist' });
+Decklist.belongsToMany(User, { through: 'user_decklist' });
 
 export default User;

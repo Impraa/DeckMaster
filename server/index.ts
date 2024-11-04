@@ -6,6 +6,7 @@ dotenv.config({});
 
 import { sequelize } from './utils/database';
 import User from './routes/User';
+import Card from './routes/Card';
 import Utils from './routes/Utils';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -21,6 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: "10mb" }));
 
 app.use("/user", User);
+app.use("/card", Card);
 if (process.env.NODE_DEV === 'dev') app.use("/utils", Utils);
 
 app.all("*", (req: Request, res: Response) => {
