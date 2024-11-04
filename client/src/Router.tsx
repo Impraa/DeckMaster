@@ -1,4 +1,5 @@
 import Navbar from "@layout/Navbar";
+import NewCard from "@pages/NewCard";
 import SingleDecklist from "@pages/SingleDecklist";
 import { lazy } from "react";
 import { Route, Routes } from "react-router-dom";
@@ -20,6 +21,7 @@ function Router() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/create-decklist" element={<CreateDecklist/>} />
+        <Route path="/add-card" element={<NewCard/>} />
         <Route path="/decklist/:id" element={<SingleDecklist/>} />
         <Route path="/decklists/:query" element={<Decklists/>} />
         <Route path="/edit-profile/:id" element={<EditProfile />} />
