@@ -7,6 +7,8 @@ import path from "path";
 import express, { Request, Response } from 'express';
 import { isUserAdmin } from '../utils/middelware';
 import { isValidCard } from '../../types/card';
+import Card from '../models/Card';
+import { Op } from 'sequelize';
 
 const router = express.Router();
 
@@ -54,6 +56,34 @@ router.post('/new', isUserAdmin, upload.single("cardImage") , async (req:Request
     
 
     res.status(201).send('New card was created');
+})
+
+router.post('/cards', async (req: Request, res: Response) => {
+  if (!req.body.offset && req.body.offset !== 0)
+  {
+    res.status(400).json('Offset is not defined');
+    return;
+  }
+
+  const { offset, searchTerm } = req.body;
+
+  let whereClause: { name?: { [Op.like]? : string }} = {};
+
+  if (searchTerm)
+  {
+    whereClause = { name: { [Op.like]: `%${searchTerm}%` } };
+  }
+
+  try
+  {
+    const cards = await Card.findAll({ offset: offset, limit: 500, order: [['name', 'ASC']], where: whereClause });
+
+    res.status(200).json(cards);
+  }
+  catch (error)
+  {
+    res.status(500).json('Database error -' + error);
+  }
 })
 
 export default router;
