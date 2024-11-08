@@ -10,19 +10,24 @@ const Navbar = () => {
             <div>
                 <Link URL="/">Home</Link>
             </div>
-            <div className="space-x-4">
+            <div className="space-x-4 flex justify-between">
                 {
                     userContext && userContext.user ? 
                         (
                             <>
-                                <p>Hello, <Link URL={`/profile/${userContext.user.id}`} >{userContext.user.username}</Link></p>
-                                <button onClick={() => {userContext.logoutUser()}}>Logout</button>
+                                <Link URL="/create-decklist">Create Decklist</Link>
+                                <div className="flex space-x-4">
+                                    <p>Hello, <Link URL={`/profile/${userContext.user.id}`} >{userContext.user.username}</Link></p>
+                                    <button onClick={() => {userContext.logoutUser()}}>Logout</button>
+                                </div>
                             </>
                         ) :
-                        (<>
-                            <Link URL="/login">Login</Link>
-                            <Link URL="/register">Register</Link>
-                        </>)
+                        (
+                            <>
+                                <Link URL="/login">Login</Link>
+                                <Link URL="/register">Register</Link>
+                            </>
+                        )
                 }
                 
             </div>
