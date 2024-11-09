@@ -1,4 +1,4 @@
-export const fetchCards = (offset: number) => {
+export const fetchCardsAsync = (offset: number) => {
     return fetch(`http://localhost:8000/card/cards`, {
         method: 'POST',
         headers: {
