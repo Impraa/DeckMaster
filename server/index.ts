@@ -18,7 +18,7 @@ const port = process.env.PORT || 8000;
 
 app.use(cors({ credentials: true, origin: ["http://127.0.0.1:5173", "http://localhost:5173"], }));
 app.use(cookieParser());
-app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/image', express.static(path.join(__dirname, 'image')));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: "10mb" }));

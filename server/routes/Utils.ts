@@ -39,7 +39,7 @@ router.post('/migrate-cards', async (req: Request, res: Response) => {
 
             const options = {
                 url: cardData.card_images[0].image_url,
-                dest: `${__dirname}/../images/cardImages/`,
+                dest: `${__dirname}/../image/cardImages/`,
             };
 
             try
