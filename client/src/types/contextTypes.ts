@@ -3,9 +3,7 @@ import { ICard } from '../../../types/card';
 
 export interface IUserContextValue{
     user: IUser | null,
-    setUser: React.Dispatch<React.SetStateAction<IUser | null>>,
     isLoading: boolean,
-    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
     error: string | null,
     logoutUser: () => void,
     updateUser: (id: number, formData: IUpdateUserData) => void,

@@ -37,22 +37,25 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
   const loginUser = async (formData: LoginUser) => {
     setIsLoading(true);
     const response = await loginUserAsync(formData);
-    if(!response.error)
+    if (!response.error)
     {
       setUser(response.data.user);
       setError(null);
-      setIsLoading(false);
     }
+    else setError(response.data);
+    setIsLoading(false);
   }
 
   const registerUser = async (formData: Omit<IUser, 'id' | 'role'>) => {
     setIsLoading(true);
     const response = await registerUserAsync(formData);
-    if(!response.error)
+    if (!response.error)
     {
       setUser(response.data.user);
-      setIsLoading(false);
+      setError(null);
     }
+    else setError(response.data);
+    setIsLoading(false);
   }
 
   const logoutUser = async () => {
@@ -60,19 +63,26 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const response = await logoutUserAsync();
     if (!response.error)
     {
-      setIsLoading(false);
       setUser(null);
+      setError(null);
     }
+    else setError(response.data);
+    setIsLoading(false);
   }
 
   const updateUser = async (id: number, formData: IUpdateUserData) => {
     setIsLoading(true);
     const response = await updateUserAsync(id, formData);
-    if (!response.error) setUser(response.data.user);
+    if (!response.error)
+    {
+      setUser(response.data.user);
+      setError(null);
+    }
+    else setError(response.data);
     setIsLoading(false)
   }
 
-  const value = React.useMemo( () => ({ user, setUser, isLoading, setIsLoading, error, logoutUser, updateUser, loginUser, registerUser }), [user, isLoading, error] );
+  const value = React.useMemo( () => ({ user, isLoading, error, logoutUser, updateUser, loginUser, registerUser }), [user, isLoading, error] );
 
   return <UserContext.Provider value={value}> {children} </UserContext.Provider>;
 };
