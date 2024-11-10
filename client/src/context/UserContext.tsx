@@ -7,7 +7,8 @@ export const UserContext = createContext<IUserContextValue | null>(null);
 
 const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
   const [user, setUser] = useState<IUser | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useLayoutEffect(() => {
     //refresh user
@@ -20,11 +21,16 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
         if (!error && isValidUser(data.user))
         {
           setUser(data.user);
-          setIsLoading(false);
+          setError(null);
         }
+        else setError(data);
       };
     
       fetchUserData();
+    }
+
+    if (isLoading && (user || error)) {
+      setIsLoading(false);
     }
   }, [user])
 
@@ -33,8 +39,9 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const response = await loginUserAsync(formData);
     if(!response.error)
     {
-      setIsLoading(false);
       setUser(response.data.user);
+      setError(null);
+      setIsLoading(false);
     }
   }
 
@@ -43,8 +50,8 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const response = await registerUserAsync(formData);
     if(!response.error)
     {
-      setIsLoading(false);
       setUser(response.data.user);
+      setIsLoading(false);
     }
   }
 
@@ -65,7 +72,7 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     setIsLoading(false)
   }
 
-  const value = React.useMemo( () => ({ user, setUser, isLoading, setIsLoading, logoutUser, updateUser, loginUser, registerUser }), [user, isLoading] );
+  const value = React.useMemo( () => ({ user, setUser, isLoading, setIsLoading, error, logoutUser, updateUser, loginUser, registerUser }), [user, isLoading, error] );
 
   return <UserContext.Provider value={value}> {children} </UserContext.Provider>;
 };

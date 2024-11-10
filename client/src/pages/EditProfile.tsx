@@ -7,7 +7,7 @@ const EditProfile = () => {
     const userContext = useCallContext(UserContext);
     const { id } = useParams();
 
-    if (!id || isNaN(+id) || !userContext) return <Navigate to={'/'} />;
+    if (!id || isNaN(+id) || !userContext || (!userContext.user && !userContext.isLoading) || userContext.error) return <Navigate to={'/'} />;
         
     return (
         <div>

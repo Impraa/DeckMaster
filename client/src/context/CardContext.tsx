@@ -30,11 +30,10 @@ const CardProvider:React.FC<{children: ReactNode}> = ({children}) => {
 
     const setCardDetails = (id: number) => {
         const card = cards.find((item) => item.id === id) ?? null;
-        console.log(card ? card.name : 'lol');
         setCard(card);
     }
 
-    const value = useMemo(() => ({cards, card, isLoading, fetchCards, setCardDetails}), [cards, isLoading]);
+    const value = useMemo(() => ({cards, card, isLoading, fetchCards, setCardDetails}), [cards, card, isLoading]);
     return <CardContext.Provider value={value}> {children} </CardContext.Provider>;
 }
 
