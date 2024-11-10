@@ -14,8 +14,8 @@ export interface IUserContextValue{
 
 export interface ICardContextValue{
     cards: ICard[],
-    setCards: React.Dispatch<React.SetStateAction<ICard[]>>,
+    card: ICard | null,
     isLoading: boolean,
-    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
-    fetchCards: (offset:number) => void,
+    fetchCards: (offset: number) => void,
+    setCardDetails: (id: number) => void,
 }

@@ -7,6 +7,7 @@ export const CardContext = createContext<ICardContextValue | null>(null);
 
 const CardProvider:React.FC<{children: ReactNode}> = ({children}) => {
     const [cards, setCards] = useState<ICard[]>([]);
+    const [card, setCard] = useState<ICard | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [internalOffset, setInternalOffset] = useState<number>(0);
 
@@ -16,11 +17,9 @@ const CardProvider:React.FC<{children: ReactNode}> = ({children}) => {
         if (internalOffset !== offset || cards.length < 1)
         {
             setInternalOffset(offset);
-            console.log(offset)
             const response = await fetchCardsAsync(offset * 500);
             if (!response.error)
             {
-                console.log(response.data);
                 setCards((prevCards) => (
                     offset === 0 ? response.data : [...prevCards, ...response.data]
                 ));
@@ -29,7 +28,13 @@ const CardProvider:React.FC<{children: ReactNode}> = ({children}) => {
         setIsLoading(false);
     }
 
-    const value = useMemo(() => ({cards, setCards, isLoading, setIsLoading, fetchCards}), [cards, isLoading]);
+    const setCardDetails = (id: number) => {
+        const card = cards.find((item) => item.id === id) ?? null;
+        console.log(card ? card.name : 'lol');
+        setCard(card);
+    }
+
+    const value = useMemo(() => ({cards, card, isLoading, fetchCards, setCardDetails}), [cards, isLoading]);
     return <CardContext.Provider value={value}> {children} </CardContext.Provider>;
 }
 

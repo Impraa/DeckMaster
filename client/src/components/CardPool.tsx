@@ -31,7 +31,12 @@ const CardPool = () => {
         <div className="grid grid-cols-4 gap-4 h-[85vh] overflow-auto" onScroll={handleScroll} ref={containerRef}>
             {
                 cardContext.cards.length > 1 ? cardContext.cards.map((card) => {
-                    return (<img key={card.id} src={`http://localhost:8000${card.cardImage}`} className=" w-20"/>)
+                    return (
+                        <img
+                            key={card.id}
+                            onMouseEnter={() => cardContext.setCardDetails(card.id)}
+                            src={`http://localhost:8000${card.cardImage}`} className=" w-20" />
+                    )
                 }) : (<p>Loading...</p>)
             }
         </div>
