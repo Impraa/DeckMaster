@@ -6,13 +6,19 @@ import { Navigate, useNavigate } from "react-router-dom";
 const CardPool = () => {
     const cardContext = useCallContext(CardContext);
     const [offset, setOffset] = useState<number>(0);
+    const [searchQuery, setSearchQuery] = useState<string>('');
     const navigate = useNavigate();
     const containerRef = useRef(null);
 
     useEffect(() => {
         if (!cardContext) return navigate('/');
-        cardContext.fetchCards(offset)
+        if (!searchQuery) cardContext.fetchCards(offset)
     }, [cardContext, navigate, offset])
+
+    useEffect(() => {
+        if (!cardContext) return navigate('/');
+        if(searchQuery) cardContext.fetchCardsWithSearch(offset, searchQuery);
+    }, [searchQuery, offset])
 
     if (!cardContext) return <Navigate to={'/'} />;
     
@@ -27,19 +33,29 @@ const CardPool = () => {
         }
     };
 
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = e.target;
+
+        setSearchQuery(value);
+        setOffset(0);
+    }
+
     return (
-        <div className="grid grid-cols-4 gap-4 h-[85vh] overflow-auto" onScroll={handleScroll} ref={containerRef}>
-            {
-                cardContext.cards.length > 1 ? cardContext.cards.map((card) => {
-                    return (
-                        <img
-                            key={card.id}
-                            onMouseEnter={() => cardContext.setCardDetails(card.id)}
-                            src={`http://localhost:8000${card.cardImage}`} className=" w-20" />
-                    )
-                }) : (<p>Loading...</p>)
-            }
-        </div>
+        <div className="flex flex-col">
+            <input placeholder="Search..." onChange={onChange} />
+            <div className="grid grid-cols-4 gap-4 max-h-[85vh] overflow-auto" onScroll={handleScroll} ref={containerRef}>
+                {
+                    cardContext.cards.length > 1 ? cardContext.cards.map((card) => {
+                        return (
+                            <img
+                                key={card.id}
+                                onMouseEnter={() => cardContext.setCardDetails(card.id)}
+                                src={`http://localhost:8000${card.cardImage}`} className=" w-20" />
+                        )
+                    }) : (<p>Loading...</p>)
+                }
+            </div>
+        </div>    
     )
 }
 

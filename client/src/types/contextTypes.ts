@@ -17,4 +17,5 @@ export interface ICardContextValue{
     isLoading: boolean,
     fetchCards: (offset: number) => void,
     setCardDetails: (id: number) => void,
+    fetchCardsWithSearch: (offset: number, searchTerm: string) => void,
 }

@@ -1,10 +1,10 @@
-export const fetchCardsAsync = (offset: number) => {
+export const fetchCardsAsync = (offset: number, searchTerm?: string) => {
     return fetch(`http://localhost:8000/card/cards`, {
         method: 'POST',
         headers: {
         "Content-Type": "application/json",
         },
-        body: JSON.stringify({ offset: offset }),
+        body: JSON.stringify({ offset: offset, searchTerm: searchTerm ?? '' }),
         credentials: 'include'
       })
       .then(async (response) => { 

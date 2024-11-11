@@ -33,7 +33,19 @@ const CardProvider:React.FC<{children: ReactNode}> = ({children}) => {
         setCard(card);
     }
 
-    const value = useMemo(() => ({cards, card, isLoading, fetchCards, setCardDetails}), [cards, card, isLoading]);
+    const fetchCardsWithSearch = async (offset: number, searchTerm: string) => {
+        setIsLoading(true);
+        const response = await fetchCardsAsync(offset * 500, searchTerm);
+        if (!response.error)
+        {
+            setCards((prevCards) => (
+                offset === 0 ? response.data : [...prevCards, ...response.data]
+            ));
+        }
+        setIsLoading(false);
+    }
+
+    const value = useMemo(() => ({cards, card, isLoading, fetchCards, fetchCardsWithSearch, setCardDetails}), [cards, card, isLoading]);
     return <CardContext.Provider value={value}> {children} </CardContext.Provider>;
 }
 
