@@ -11,7 +11,7 @@ const CreateDecklist = () => {
 
     useLayoutEffect(() => {
         if (!userContext || (!userContext.user && !userContext.isLoading) || userContext.error) return navigate('/');
-    }, [userContext])
+    }, [userContext, navigate])
 
     return(
         <div className="grid grid-cols-[1fr_2fr_1fr] p-5">
