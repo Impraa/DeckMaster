@@ -261,19 +261,34 @@ export interface ICard {
     cardType: CardType,
     cardText: string,
     cardImage: string,
-    level?: string,
-    archtype?: ArchetypeType,
-    race?: RaceType,
     banOcg?: BanType,
     banTcg?: BanType,
     banGoat?: BanType
-    attribute?: AttributeType,
-    atk?: number,
-    def?: number,
+}
+
+export interface IMonsterCard extends ICard{
+    level: string,
+    archetype?: ArchetypeType,
+    race: RaceType,
+    attribute: AttributeType,
+    atk: number,
+    def: number,
 }
 
 const isValidCardType = (cardType: CardType): cardType is CardType => {
     return CardTypes.includes(cardType);
+}
+
+const isValidRaceType = (cardRace: RaceType): cardRace is RaceType => {
+    return RaceTypes.includes(cardRace);
+}
+
+const isValidAttributeType = (cardAttribute: AttributeType): cardAttribute is AttributeType => {
+    return AttributeTypes.includes(cardAttribute);
+}
+
+const isValidArchetypeType = (cardArchetype: ArchetypeType): cardArchetype is ArchetypeType => {
+    return ArchetypeTypes.includes(cardArchetype);
 }
 
 export const isValidCard = (card: ICard): card is ICard => {
@@ -281,3 +296,9 @@ export const isValidCard = (card: ICard): card is ICard => {
     return typeof id === 'number' && typeof name === 'string' && isValidCardType(cardType)
     && typeof cardText === 'string' && typeof cardImage === 'string'
 } 
+
+export const isValidMonster = (monsterCard: IMonsterCard): monsterCard is IMonsterCard => {
+    const { level, archetype, race, attribute, atk, def } = monsterCard;
+    return isValidCard(monsterCard) && typeof level === 'string' && typeof atk === 'number' && typeof def === 'number'
+        && (archetype ? isValidArchetypeType(archetype) : true) && isValidRaceType(race) && isValidAttributeType(attribute);
+}

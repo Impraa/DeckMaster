@@ -18,7 +18,7 @@ const CardPool = () => {
     useEffect(() => {
         if (!cardContext) return navigate('/');
         if(searchQuery) cardContext.fetchCardsWithSearch(offset, searchQuery);
-    }, [searchQuery, offset])
+    }, [searchQuery, navigate, offset])
 
     if (!cardContext) return <Navigate to={'/'} />;
     
