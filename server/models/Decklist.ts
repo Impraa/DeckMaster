@@ -10,6 +10,10 @@ const Decklist = sequelize.define("decklists", {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  partOfDeck: {
+    type: DataTypes.STRING,
+    allowNull: false,
   }
 });
 
