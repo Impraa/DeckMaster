@@ -11,10 +11,6 @@ const Decklist = sequelize.define("decklists", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  partOfDeck: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  }
 });
 
 export default Decklist;
