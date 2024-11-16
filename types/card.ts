@@ -261,12 +261,12 @@ export interface ICard {
     humanReadableCardType: CardType,
     cardText: string,
     cardImage: string,
+    race: RaceType,
     banOcg?: BanType,
     banTcg?: BanType,
     banGoat?: BanType,
     level?: string,
     archetype?: ArchetypeType,
-    race?: RaceType,
     attribute?: AttributeType,
     atk?: number,
     def?: number,
@@ -275,11 +275,14 @@ export interface ICard {
 export interface IMonsterCard extends ICard{
     level: string,
     archetype?: ArchetypeType,
-    race: RaceType,
     attribute: AttributeType,
     atk: number,
     def: number,
 }
+
+export interface ISpellCard extends ICard{ }
+
+export interface ITrapCard extends ICard{ }
 
 const isValidCardType = (cardType: CardType): cardType is CardType => {
     return CardTypes.includes(cardType);
@@ -293,18 +296,22 @@ const isValidAttributeType = (cardAttribute: AttributeType): cardAttribute is At
     return AttributeTypes.includes(cardAttribute);
 }
 
-const isValidArchetypeType = (cardArchetype: ArchetypeType): cardArchetype is ArchetypeType => {
-    return ArchetypeTypes.includes(cardArchetype);
-}
-
 export const isValidCard = (card: ICard): card is ICard => {
-    const { id, name, cardText, cardImage, humanReadableCardType } = card;
+    const { id, name, cardText, race, cardImage, humanReadableCardType } = card;
     return typeof id === 'number' && typeof name === 'string' && isValidCardType(humanReadableCardType)
-    && typeof cardText === 'string' && typeof cardImage === 'string'
+    && typeof cardText === 'string' && typeof cardImage === 'string' && isValidRaceType(race)
 } 
 
 export const isValidMonster = (monsterCard: ICard): monsterCard is IMonsterCard => {
     return isValidCard(monsterCard) && typeof monsterCard.level === 'string' && !Number.isNaN(Number(monsterCard.atk))
-        && !Number.isNaN(Number(monsterCard.def)) && ( monsterCard.race ? isValidRaceType(monsterCard.race) : false) &&
-        ( monsterCard.attribute ? isValidAttributeType(monsterCard.attribute) : false);
+        && !Number.isNaN(Number(monsterCard.def)) && ( monsterCard.attribute ? isValidAttributeType(monsterCard.attribute) : false);
+}
+
+export const isValidSpell = (spellCard: ICard): spellCard is ISpellCard => {
+    return isValidCard(spellCard) && spellCard.humanReadableCardType.includes('spell');
+}
+
+
+export const isValidTrap = (spellCard: ICard): spellCard is ISpellCard => {
+    return isValidCard(spellCard) && spellCard.humanReadableCardType.includes('trap');
 }
