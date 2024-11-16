@@ -1,8 +1,8 @@
 import { CardContext } from "@context/CardContext"
 import useCallContext from "@hooks/useCallContext"
 import { Navigate } from "react-router-dom";
-import { isValidMonster } from "../../../types/card";
-import MonsterCardDetails from "./MonsterCardDetails";
+import { isValidMagic, isValidMonster } from "../../../types/card";
+import GeneralCardDetails from "@components/GeneralCardDetails";
 
 const CardDetails = () => {
     const cardContext = useCallContext(CardContext);
@@ -11,12 +11,8 @@ const CardDetails = () => {
 
     return (
         <div>
-            {cardContext.card ?
-                isValidMonster(cardContext.card) ?
-                    <MonsterCardDetails monsterCard={cardContext.card}/> :     
-                    <>
-                        <img key={cardContext.card.id} src={`http://localhost:8000${cardContext.card.cardImage}`} />
-                    </>
+            {cardContext.card && (isValidMonster(cardContext.card) || isValidMagic(cardContext.card))?
+                <GeneralCardDetails card={cardContext.card}/>
                 : <p>No card selected</p>
             }
         </div>

@@ -280,10 +280,6 @@ export interface IMonsterCard extends ICard{
     def: number,
 }
 
-export interface ISpellCard extends ICard{ }
-
-export interface ITrapCard extends ICard{ }
-
 const isValidCardType = (cardType: CardType): cardType is CardType => {
     return CardTypes.includes(cardType);
 }
@@ -307,11 +303,8 @@ export const isValidMonster = (monsterCard: ICard): monsterCard is IMonsterCard 
         && !Number.isNaN(Number(monsterCard.def)) && ( monsterCard.attribute ? isValidAttributeType(monsterCard.attribute) : false);
 }
 
-export const isValidSpell = (spellCard: ICard): spellCard is ISpellCard => {
-    return isValidCard(spellCard) && spellCard.humanReadableCardType.includes('spell');
-}
-
-
-export const isValidTrap = (spellCard: ICard): spellCard is ISpellCard => {
-    return isValidCard(spellCard) && spellCard.humanReadableCardType.includes('trap');
+export const isValidMagic = (magicCards: ICard): magicCards is ICard => {
+    return isValidCard(magicCards) &&
+        (magicCards.humanReadableCardType.toLocaleLowerCase().includes('spell') ||
+        magicCards.humanReadableCardType.toLocaleLowerCase().includes('trap'));
 }
