@@ -27,7 +27,6 @@ const upload = multer({
     }
     cb(null, false);
   },
-  // you might also want to set some limits: https://github.com/expressjs/multer#limits
 });
 
 router.post('/new', isUserAdmin, upload.single("cardImage") , async (req:Request, res: Response) => {
