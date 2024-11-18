@@ -1,3 +1,4 @@
+import AddNewCardForm from "@components/AddNewCardForm";
 import { UserContext } from "@context/UserContext";
 import useCallContext from "@hooks/useCallContext";
 import { useLayoutEffect } from "react";
@@ -16,6 +17,7 @@ const AddCard = () => {
     return (
         <div>
             Add Card
+            <AddNewCardForm/>
         </div>
     )
 }

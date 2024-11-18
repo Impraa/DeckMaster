@@ -132,7 +132,7 @@ type AttributeType = "DARK" | "EARTH" | "FIRE" | "LIGHT" | "WATER" | "WIND" | "D
 
 type BanType = 'Limited' | 'Forbidden' | 'Semi-Limited';
 
-const CardTypes: CardType[] = [
+export const CardTypes: CardType[] = [
     'Effect Monster', 'Continuous Trap', 'Normal Monster', 'Pendulum Effect Monster', 'Normal Trap',
     'Fusion Effect Monster', 'Flip Effect Monster', 'Normal Spell', 'Synchro Effect Monster', 'Quick-Play Spell',
     'Tuner Effect Monster', 'Link Effect Monster', 'Token', 'Equip Spell', 'Field Spell', 'Xyz Effect Monster',
