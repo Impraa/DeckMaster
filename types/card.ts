@@ -155,7 +155,7 @@ export const CardTypes: CardType[] = [
     'Skill - Camula', 'Skill - Nightshroud', 'Skill - Don Zaloog', 'Skill - Tania', 'Skill - Amnael', 'Skill - Kagemaru'
 ];
 
-const RaceTypes: RaceType[] = [
+export const RaceTypes: RaceType[] = [
     'Fiend', 'Dragon', 'Continuous', 'Zombie', 'Beast-Warrior', 'Normal', 'Fairy', 'Warrior', 'Quick-Play',
     'Rock', 'Spellcaster', 'Winged Beast', 'Plant', 'Beast', 'Machine', 'Cyberse', 'Equip', 'Field',
     'Fish', 'Thunder', 'Pyro', 'Sea Serpent', 'Aqua', 'Reptile', 'Counter', 'Psychic', 'Insect',
@@ -246,7 +246,7 @@ const ArchetypeTypes: ArchetypeType[] = [
     'Blue Tears' , 'Mokey Mokey' , 'Raizeol' , 'Celebration' , 'Machine Angel'
 ];
 
-const AttributeTypes: AttributeType[] = [
+export const AttributeTypes: AttributeType[] = [
     "DARK", "EARTH", "FIRE", "LIGHT", "WATER", "WIND", "DIVINE"
 ];
 
