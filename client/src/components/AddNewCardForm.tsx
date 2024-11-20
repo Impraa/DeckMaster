@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AttributeTypes, CardTypes, ICard, IMonsterCard, RaceTypes } from "../../../types/card";
+import { AttributeTypes, CardTypes, ICard, IMonsterCard, RaceType, RaceTypes } from "../../../types/card";
 import Dropdown, { Option } from 'react-dropdown';
 import 'react-dropdown/style.css';
 import useCallContext from "@hooks/useCallContext";
@@ -49,12 +49,16 @@ const AddNewCardForm = () => {
 
     const handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if(cardImage)
+        if(formData && typeOfCard)
         {
-            const submissionData = new FormData();
-            submissionData.append('cardImage', cardImage);
-            submissionData.append('cardData', JSON.stringify(formData));
-            cardContext.uploadNewCard(submissionData);
+            if(!formData.race) formData.race = formData.humanReadableCardType.split(typeOfCard[0].toLocaleUpperCase() + typeOfCard.slice(1))[0].trim() as RaceType;
+            if(cardImage)
+            {
+                const submissionData = new FormData();
+                submissionData.append('cardImage', cardImage);
+                submissionData.append('cardData', JSON.stringify(formData));
+                cardContext.uploadNewCard(submissionData);
+            }
         }
     }
 
@@ -73,14 +77,14 @@ const AddNewCardForm = () => {
                     <label htmlFor="cardImage">Card Image upload</label>
                     <input type="file" id="cardImage" name="cardImage" className="hidden" onChange={handleImageUpload}/>
                     {cardImage && <p>Uploaded: {cardImage.name}</p>}
-                    <Dropdown onChange={(e) => {handleDropdownChange(e, 'humanReadableType')}} options={humanReadbleTypes} />
+                    <Dropdown onChange={(e) => {handleDropdownChange(e, 'humanReadableCardType')}} options={humanReadbleTypes} />
                     {typeOfCard === 'monster' ?
                         <>
-                            <Dropdown options={cardRaces} onChange={(e) => {handleDropdownChange(e, 'cardRace')}} />
+                            <Dropdown options={cardRaces} onChange={(e) => {handleDropdownChange(e, 'race')}} />
                             <Dropdown options={attributeTypes} onChange={(e) => {handleDropdownChange(e, 'attribute')}}/>
-                            <input type="number" min={0} max={12} placeholder="Level" onChange={handleFormChange} />
-                            <input type="number" min={0} placeholder="ATK" onChange={handleFormChange} />
-                            <input type="number" min={0} placeholder="DEF" onChange={handleFormChange} />
+                            <input type="number" min={0} max={12} placeholder="Level" name="level" onChange={handleFormChange} />
+                            <input type="number" min={0} placeholder="ATK" name="atk" onChange={handleFormChange} />
+                            <input type="number" min={0} placeholder="DEF" name="def" onChange={handleFormChange} />
                         </> : <></>}
                     <button type="submit">Save</button>
                 </form>      

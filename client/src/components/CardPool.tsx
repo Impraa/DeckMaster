@@ -21,7 +21,7 @@ const CardPool = () => {
     }, [searchQuery, navigate, offset])
 
     if (!cardContext) return <Navigate to={'/'} />;
-    
+
     const handleScroll = () => {
         if (!containerRef.current) return;
 
@@ -45,7 +45,7 @@ const CardPool = () => {
             <input placeholder="Search..." onChange={onChange} />
             <div className="grid grid-cols-4 gap-4 max-h-[85vh] overflow-auto" onScroll={handleScroll} ref={containerRef}>
                 {
-                    cardContext.cards.length > 1 ? cardContext.cards.map((card) => {
+                    cardContext.cards.length > 0 ? cardContext.cards.map((card) => {
                         return (
                             <img
                                 key={card.id}

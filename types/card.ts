@@ -21,7 +21,7 @@ type CardType =
     'Skill - Titan' | 'Skill - Adrian Gecko' | 'Skill - Thelonious Vi' | 'Skill - The Supreme K' | 
     'Skill - Camula' | 'Skill - Nightshroud' | 'Skill - Don Zaloog' | 'Skill - Tania' | 'Skill - Amnael' | 'Skill - Kagemaru';
   
-type RaceType = 
+export type RaceType = 
     'Fiend' | 'Dragon' | 'Continuous' | 'Zombie' | 'Beast-Warrior' | 'Normal' | 'Fairy' | 'Warrior' | 'Quick-Play' | 
     'Rock' | 'Spellcaster' | 'Winged Beast' | 'Plant' | 'Beast' | 'Machine' | 'Cyberse' | 'Equip' | 'Field' | 
     'Fish' | 'Thunder' | 'Pyro' | 'Sea Serpent' | 'Aqua' | 'Reptile' | 'Counter' | 'Psychic' | 'Insect' | 
@@ -298,9 +298,20 @@ export const isValidCard = (card: ICard): card is ICard => {
     && typeof cardText === 'string' && typeof cardImage === 'string' && isValidRaceType(race)
 } 
 
+export const isValidNewCard = (card: ICard): card is ICard => {
+    const { name, cardText, race, cardImage, humanReadableCardType } = card;
+    return typeof name === 'string' && isValidCardType(humanReadableCardType)
+    && typeof cardText === 'string' && typeof cardImage === 'string' && isValidRaceType(race)
+} 
+
 export const isValidMonster = (monsterCard: ICard): monsterCard is IMonsterCard => {
     return isValidCard(monsterCard) && typeof monsterCard.level === 'string' && !Number.isNaN(Number(monsterCard.atk))
         && !Number.isNaN(Number(monsterCard.def)) && ( monsterCard.attribute ? isValidAttributeType(monsterCard.attribute) : false);
+}
+
+export const isValidNewMonster = (monsterCard: ICard): monsterCard is ICard => {
+    return isValidNewCard(monsterCard) && typeof monsterCard.level === 'string' && !Number.isNaN(Number(monsterCard.atk))
+    && !Number.isNaN(Number(monsterCard.def)) && ( monsterCard.attribute ? isValidAttributeType(monsterCard.attribute) : false);
 }
 
 export const isValidMagic = (magicCards: ICard): magicCards is ICard => {

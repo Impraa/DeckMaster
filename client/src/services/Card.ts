@@ -23,6 +23,7 @@ export const uploadNewCardAsync = (formData: FormData) => {
     })
     .then(async (response) => { 
       const data = await response.json();
+      console.log(data);
       if(!response.ok) return { error: true, data: data};
       else return { error: false, data: data};
       })
