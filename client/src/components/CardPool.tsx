@@ -40,6 +40,10 @@ const CardPool = () => {
         setOffset(0);
     }
 
+    const handleDragStart = (e: React.DragEvent<HTMLImageElement>, cardId: number) => {
+        e.dataTransfer.setData("cardId", cardId.toString());
+    };
+
     return (
         <div className="flex flex-col">
             <input placeholder="Search..." onChange={onChange} />
@@ -48,8 +52,11 @@ const CardPool = () => {
                     cardContext.cards.length > 0 ? cardContext.cards.map((card) => {
                         return (
                             <img
+                                draggable
                                 key={card.id}
                                 onMouseEnter={() => cardContext.setCardDetails(card.id)}
+                                onClick={() => console.log('kliktanje')}
+                                onDragStart={(e) => handleDragStart(e,card.id)}
                                 src={`http://localhost:8000${card.cardImage}`} className=" w-20" />
                         )
                     }) : (<p>Loading...</p>)

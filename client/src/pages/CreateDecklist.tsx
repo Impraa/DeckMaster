@@ -1,5 +1,6 @@
 import CardDetails from "@components/CardDetails";
 import CardPool from "@components/CardPool";
+import ChangableDecklist from "@components/ChangableDecklist";
 import { UserContext } from "@context/UserContext";
 import useCallContext from "@hooks/useCallContext";
 import { useLayoutEffect } from "react";
@@ -16,7 +17,7 @@ const CreateDecklist = () => {
     return(
         <div className="grid grid-cols-[1fr_2fr_1fr] p-5">
             <CardDetails />
-            <div>Actual Decklist</div>
+            <ChangableDecklist />
             <CardPool />
         </div>
     )

@@ -15,6 +15,7 @@ const Navbar = () => {
                     userContext && userContext.user ? 
                         (
                             <>
+                                {userContext.user.role === 'ADMIN' && <Link URL="/manage-cards">Manage Cards</Link>}
                                 <Link URL="/create-decklist">Create Decklist</Link>
                                 <div className="flex space-x-4">
                                     <p>Hello, <Link URL={`/profile/${userContext.user.id}`} >{userContext.user.username}</Link></p>

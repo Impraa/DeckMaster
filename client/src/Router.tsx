@@ -11,6 +11,7 @@ const CreateDecklist = lazy(() => import('@pages/CreateDecklist'));
 const Decklists = lazy(() => import('@pages/Decklists'));
 const SingleDecklist = lazy(() => import('@pages/SingleDecklist'));
 const AddCard = lazy(() => import('@pages/AddCard'));
+const ManageCards = lazy(() => import('@pages/ManageCards'));
 
 function Router() {
   return (
@@ -22,6 +23,7 @@ function Router() {
         <Route path="/register" element={<Register />} />
         <Route path="/create-decklist" element={<CreateDecklist/>} />
         <Route path="/add-card" element={<AddCard/>} />
+        <Route path="/manage-cards" element={<ManageCards/>} />
         <Route path="/decklist/:id" element={<SingleDecklist/>} />
         <Route path="/decklists/:query" element={<Decklists/>} />
         <Route path="/edit-profile/:id" element={<EditProfile />} />
