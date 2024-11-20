@@ -6,19 +6,29 @@ import multer from "multer";
 import path from "path";
 import express, { Request, Response } from 'express';
 import { isUserAdmin } from '../utils/middelware';
-import { isValidCard } from '../../types/card';
+import { isValidCard, isValidNewCard, isValidNewMonster } from '../../types/card';
 import Card from '../models/Card';
 import { Op } from 'sequelize';
+import { generateImageSlug } from '../utils/helperFunctions';
 
 const router = express.Router();
 
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "image/cardImages");
+  },
+  filename: (req, file, cb) => {
+    cb(null, generateImageSlug(file.originalname.split('.')[0].trim()) + path.extname(file.originalname));
+  },
+});
+
 const upload = multer({
-  dest: "images/cardImages",
+  storage: storage,
   limits: {
     fileSize: 20 * 1024 * 1024
   },
   fileFilter: (req, file, cb) => {
-    const filetypes = /jpeg|jpg|png|gif/;
+    const filetypes = /jpeg|jpg|png/;
     const mimetype = filetypes.test(file.mimetype);
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
 
@@ -29,14 +39,15 @@ const upload = multer({
   },
 });
 
-router.post('/new', isUserAdmin, upload.single("cardImage") , async (req:Request, res: Response) => {
-    const { card, user } = req.body;
+router.post('/new', isUserAdmin, upload.single('cardImage') , async (req:Request, res: Response) => {
+    const { cardData } = req.body;
+    const card = JSON.parse(cardData);
 
-    /*if(!req.file)
+    if(!req.file)
     {
         res.status(400).json('There is no file uploded');
         return;
-    } */
+    } 
 
     if(!card)
     {
@@ -44,17 +55,24 @@ router.post('/new', isUserAdmin, upload.single("cardImage") , async (req:Request
         return;
     }
 
-    card.id = Date.now();
-    card.cardImage = Date.now().toString();
-
-    if(!isValidCard(card))
+    card.cardImage = '/image/cardImages/' + req.file.filename;
+    console.log(card);
+    if(card.humanReadableCardType.includes('Monster') && !isValidNewMonster(card))
+    {
+      res.status(400).json('Card is missing some manditory fields, please try again');
+      return;
+    }
+    else if(!card.humanReadableCardType.includes('Monster') && !isValidNewCard(card))
     {
         res.status(400).json('Card is missing some manditory fields, please try again');
         return;
     }
-    
 
-    res.status(201).json('New card was created');
+    console.log(card);
+    const newCard = await Card.create({...card, frameType: card.humanReadableCardType.includes('Monster') ? 'monster' : 
+      card.humanReadableCardType.includes('Spell') ? 'spell' : 'trap'});
+
+    res.status(201).json({newCard: {...newCard.dataValues}});
 })
 
 router.post('/cards', async (req: Request, res: Response) => {

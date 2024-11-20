@@ -46,7 +46,6 @@ export const isUserAdmin = (req:Request, res:Response, next:NextFunction) => {
           res.status(403).send('You are not an admin');
           return;
         }
-        req.body.user = validUser;
       } 
       else 
       {

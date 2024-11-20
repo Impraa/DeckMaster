@@ -55,7 +55,6 @@ router.post('/migrate-cards', async (req: Request, res: Response) => {
             await Card.create({
                 id: cardData.id,
                 name: cardData.name,
-                type: cardData.type,
                 humanReadableCardType: cardData.humanReadableCardType,
                 frameType: cardData.frameType,
                 cardText: cardData.desc,

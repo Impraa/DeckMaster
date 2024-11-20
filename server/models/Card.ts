@@ -5,14 +5,10 @@ import Decklist from "./Decklist";
 const Card = sequelize.define("cards", {
     id: {
         type: DataTypes.INTEGER,
+        autoIncrement: true,
         primaryKey: true,
     },
     name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-    },
-    type: {
         type: DataTypes.STRING,
         allowNull: false,
     },
@@ -68,6 +64,10 @@ const Card = sequelize.define("cards", {
         type: DataTypes.STRING,
         allowNull: false,
     }
+},{
+    indexes:[
+        {unique:true, fields:['name']},
+      ]
 });
 
 const CardDecklist = sequelize.define("card_decklist", {

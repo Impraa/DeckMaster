@@ -11,12 +11,10 @@ const User = sequelize.define("users", {
   email: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
   },
   username: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
   },
   password: {
     type: DataTypes.STRING,
@@ -27,6 +25,11 @@ const User = sequelize.define("users", {
     allowNull: false,
     defaultValue: 'USER'
   }
+},  {
+  indexes: [
+    {unique:true, fields:['email']},
+    {unique:true, fields:['username']},
+  ]
 });
 
 User.belongsToMany(Decklist, { through: 'user_decklist' });
