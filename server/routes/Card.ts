@@ -40,7 +40,7 @@ router.post('/new', isUserAdmin, upload.single("cardImage") , async (req:Request
 
     if(!card)
     {
-        res.status(400).send('There is no card in request');
+        res.status(400).json('There is no card in request');
         return;
     }
 
@@ -49,12 +49,12 @@ router.post('/new', isUserAdmin, upload.single("cardImage") , async (req:Request
 
     if(!isValidCard(card))
     {
-        res.status(400).send('Card is missing some manditory fields, please try again');
+        res.status(400).json('Card is missing some manditory fields, please try again');
         return;
     }
     
 
-    res.status(201).send('New card was created');
+    res.status(201).json('New card was created');
 })
 
 router.post('/cards', async (req: Request, res: Response) => {
