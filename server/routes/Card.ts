@@ -68,7 +68,6 @@ router.post('/new', isUserAdmin, upload.single('cardImage') , async (req:Request
         return;
     }
 
-    console.log(card);
     const newCard = await Card.create({...card, frameType: card.humanReadableCardType.includes('Monster') ? 'monster' : 
       card.humanReadableCardType.includes('Spell') ? 'spell' : 'trap'});
 
