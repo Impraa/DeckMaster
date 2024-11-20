@@ -14,3 +14,17 @@ export const fetchCardsAsync = (offset: number, searchTerm?: string) => {
         })
       .catch((e) => ({ error: true, data: e}));
 }
+
+export const uploadNewCardAsync = (formData: FormData) => {
+  return fetch(`http://localhost:8000/card/new`, {
+      method: 'POST',
+      body: formData,
+      credentials: 'include'
+    })
+    .then(async (response) => { 
+      const data = await response.json();
+      if(!response.ok) return { error: true, data: data};
+      else return { error: false, data: data};
+      })
+    .catch((e) => ({ error: true, data: e}));
+}

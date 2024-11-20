@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react";
 import { AttributeTypes, CardTypes, ICard, IMonsterCard, RaceTypes } from "../../../types/card";
-import Dropdown from 'react-dropdown';
+import Dropdown, { Option } from 'react-dropdown';
 import 'react-dropdown/style.css';
+import useCallContext from "@hooks/useCallContext";
+import { CardContext } from "@context/CardContext";
+import { Navigate } from "react-router-dom";
 
 const AddNewCardForm = () => {
+    const cardContext = useCallContext(CardContext);
     const [typeOfCard, setTypeOfCard] = useState<null | 'monster' | 'spell' | 'trap'>(null);
     const [formData, setFormData] = useState<null | ICard | IMonsterCard>(null);
     const [humanReadbleTypes, setHumanReadableTypes] = useState<string[]>([]);
     const [cardRaces, setCardRaces] = useState<string[]>([]);
     const [attributeTypes] = useState<string[]>(AttributeTypes);
+    const [cardImage, setCardImage] = useState<File | null>(null);
 
     useEffect(() => {
         if (typeOfCard)
@@ -23,6 +28,36 @@ const AddNewCardForm = () => {
         }
     }, [typeOfCard])
 
+    if(!cardContext || !cardContext.uploadNewCard) return <Navigate to={'/'} />
+
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0])
+        {
+            setCardImage(e.target.files[0]);
+            handleFormChange(e);
+        }
+    };
+
+    const handleFormChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
+        const {value, name} = e.currentTarget;
+        setFormData((oldFormData) => ({...oldFormData, [name] : value}) as IMonsterCard | ICard);
+    }
+
+    const handleDropdownChange = (e: Option, name: string) => {
+        setFormData((oldFormData) => ({ ...oldFormData, [name]: e.value }) as IMonsterCard | ICard);
+    };
+
+    const handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if(cardImage)
+        {
+            const submissionData = new FormData();
+            submissionData.append('cardImage', cardImage);
+            submissionData.append('cardData', JSON.stringify(formData));
+            cardContext.uploadNewCard(submissionData);
+        }
+    }
+
     return (
         <div className="flex flex-col items-center w-full">
             <select onChange={e => setTypeOfCard(e.currentTarget.value as 'monster' | 'spell' | 'trap')}>
@@ -32,20 +67,22 @@ const AddNewCardForm = () => {
                 <option value="trap">Trap card</option>    
             </select>
             { typeOfCard && (
-                <form className="flex flex-col w-[75vw]" encType="multipart/form-data">
-                    <input type="text" placeholder="Card Name" name="name" />
-                    <textarea placeholder="Card text" name="cardText"></textarea>
+                <form className="flex flex-col w-[75vw]" onSubmit={handleSubmit} encType="multipart/form-data">
+                    <input type="text" placeholder="Card Name" name="name" onChange={handleFormChange} />
+                    <textarea placeholder="Card text" name="cardText" onChange={handleFormChange}></textarea>
                     <label htmlFor="cardImage">Card Image upload</label>
-                    <input type="file" id="cardImage" className="hidden"/>
-                    <Dropdown options={humanReadbleTypes} />
+                    <input type="file" id="cardImage" name="cardImage" className="hidden" onChange={handleImageUpload}/>
+                    {cardImage && <p>Uploaded: {cardImage.name}</p>}
+                    <Dropdown onChange={(e) => {handleDropdownChange(e, 'humanReadableType')}} options={humanReadbleTypes} />
                     {typeOfCard === 'monster' ?
                         <>
-                            <Dropdown options={cardRaces} />
-                            <Dropdown options={attributeTypes} />
-                            <input type="number" min={0} max={12} placeholder="Level" />
-                            <input type="number" min={0} placeholder="ATK" />
-                            <input type="number" min={0} placeholder="DEF" />
+                            <Dropdown options={cardRaces} onChange={(e) => {handleDropdownChange(e, 'cardRace')}} />
+                            <Dropdown options={attributeTypes} onChange={(e) => {handleDropdownChange(e, 'attribute')}}/>
+                            <input type="number" min={0} max={12} placeholder="Level" onChange={handleFormChange} />
+                            <input type="number" min={0} placeholder="ATK" onChange={handleFormChange} />
+                            <input type="number" min={0} placeholder="DEF" onChange={handleFormChange} />
                         </> : <></>}
+                    <button type="submit">Save</button>
                 </form>      
             )}
         </div>
