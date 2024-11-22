@@ -102,4 +102,27 @@ router.post('/cards', async (req: Request, res: Response) => {
   }
 })
 
+router.delete('/delete/:id', isUserAdmin, async (req: Request, res: Response) => {
+  const { id } = req.params;
+  
+  try
+  {
+    const card = await Card.findByPk(id);
+
+    if (!card)
+    {
+        res.status(404).json('Card not found');
+        return;
+    }
+
+    await card.destroy();
+
+    res.status(200).json('Card deleted successfully');
+  }
+  catch (error)
+  {
+    res.status(500).json('Database error -' + error);  
+  }
+})
+
 export default router;
