@@ -6,6 +6,8 @@ import { BrowserRouter } from 'react-router-dom'
 import UserProvider from '@context/UserContext.tsx'
 import Loading from '@components/Loading.tsx'
 import CardProvider from '@context/CardContext.tsx'
+import ModalProvider from '@context/ModalContext.tsx'
+import Modal from '@layout/Modal.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
@@ -13,7 +15,10 @@ createRoot(document.getElementById('root')!).render(
       <Suspense fallback={<Loading />}>
         <UserProvider>
           <CardProvider>
-            <Router />
+            <ModalProvider>
+              <Modal/>
+              <Router />
+            </ModalProvider>
           </CardProvider>  
         </UserProvider>
       </Suspense>

@@ -1,5 +1,6 @@
 import { IUpdateUserData, IUser, LoginUser } from "../../../types/user";
 import { ICard } from '../../../types/card';
+import React from "react";
 
 export interface IUserContextValue{
     user: IUser | null,
@@ -19,4 +20,11 @@ export interface ICardContextValue{
     setCardDetails: (id: number) => void,
     fetchCardsWithSearch: (offset: number, searchTerm: string) => void,
     uploadNewCard: (formData: FormData) => void,
+}
+
+export interface IModalContextValue{
+    display: React.ReactNode,
+    isVisible: boolean,
+    setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
+    setDisplay: React.Dispatch<React.SetStateAction<React.ReactNode>>
 }
