@@ -23,8 +23,6 @@ export interface ICardContextValue{
 }
 
 export interface IModalContextValue{
-    display: React.ReactNode,
     isVisible: boolean,
     setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
-    setDisplay: React.Dispatch<React.SetStateAction<React.ReactNode>>
 }

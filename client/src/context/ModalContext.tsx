@@ -4,10 +4,9 @@ import { createContext, ReactNode, useMemo, useState } from "react";
 export const ModalContext = createContext<IModalContextValue | null>(null);
 
 const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [display, setDisplay] = useState<ReactNode>(<></>);
-    const [isVisible, setIsVisible] = useState<boolean>(true);
+    const [isVisible, setIsVisible] = useState<boolean>(false);
 
-    const value = useMemo(() => ({ display, isVisible, setDisplay, setIsVisible }), [display, isVisible]);
+    const value = useMemo(() => ({ isVisible, setIsVisible }), [isVisible]);
     return <ModalContext.Provider value={value} >{ children }</ModalContext.Provider> 
 }
 
