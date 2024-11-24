@@ -6,9 +6,10 @@ import multer from "multer";
 import path from "path";
 import express, { Request, Response } from 'express';
 import { isUserAdmin } from '../utils/middelware';
+import fs from 'fs';
 import { isValidCard, isValidNewCard, isValidNewMonster } from '../../types/card';
 import Card from '../models/Card';
-import { Op } from 'sequelize';
+import { Op, where } from 'sequelize';
 import { generateImageSlug } from '../utils/helperFunctions';
 
 const router = express.Router();
@@ -71,7 +72,22 @@ router.post('/new', isUserAdmin, upload.single('cardImage') , async (req:Request
     const newCard = await Card.create({...card, frameType: card.humanReadableCardType.includes('Monster') ? 'monster' : 
       card.humanReadableCardType.includes('Spell') ? 'spell' : 'trap'});
 
-    res.status(201).json({newCard: {...newCard.dataValues}});
+    const newFilename = `${newCard.dataValues.id}.${req.file.originalname.split('.')[1]}`;
+    const newFilePath = path.join(__dirname, '..' , '/image/cardImages/', newFilename);
+  console.log(newFilePath);
+    fs.rename(req.file.path, newFilePath, async (err) => {
+      if (err)
+      {
+        await newCard.destroy();
+        res.status(500).json('Error saving the file');
+        return;
+      }
+  
+      newCard.dataValues.cardImage = newFilePath;
+      await newCard.update({cardImage: '/image/cardImages/' + newFilename}, { where: {id: newCard.dataValues.id}});
+  
+      res.status(201).json({ newCard: { ...newCard.dataValues } });
+    });
 })
 
 router.post('/cards', async (req: Request, res: Response) => {
@@ -115,9 +131,19 @@ router.delete('/delete/:id', isUserAdmin, async (req: Request, res: Response) =>
         return;
     }
 
-    await card.destroy();
+    const fullPath = path.join(__dirname, '..', card.dataValues.cardImage);
 
-    res.status(200).json('Card deleted successfully');
+    fs.unlink(fullPath, async (err) => {
+      if (err)
+      {
+        res.status(500).json('Error deleteing image' + err);
+        return;
+      }
+
+      await card.destroy();
+
+      res.status(200).json('Card deleted successfully');
+    });
   }
   catch (error)
   {
