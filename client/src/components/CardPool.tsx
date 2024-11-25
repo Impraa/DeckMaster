@@ -2,9 +2,11 @@ import { CardContext } from "@context/CardContext";
 import useCallContext from "@hooks/useCallContext";
 import { useEffect, useRef, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
+import { ModalContext } from "@context/ModalContext";
 
 const CardPool = () => {
     const cardContext = useCallContext(CardContext);
+    const modalContext = useCallContext(ModalContext);
     const [offset, setOffset] = useState<number>(0);
     const [searchQuery, setSearchQuery] = useState<string>('');
     const navigate = useNavigate();
@@ -20,7 +22,7 @@ const CardPool = () => {
         if(searchQuery) cardContext.fetchCardsWithSearch(offset, searchQuery);
     }, [searchQuery, navigate, offset])
 
-    if (!cardContext) return <Navigate to={'/'} />;
+    if (!cardContext || !modalContext) return <Navigate to={'/'} />;
 
     const handleScroll = () => {
         if (!containerRef.current) return;
@@ -44,6 +46,11 @@ const CardPool = () => {
         e.dataTransfer.setData("cardId", cardId.toString());
     };
 
+    const handleOnClick = (e: React.MouseEvent<HTMLImageElement>, cardId: number) => {
+        cardContext.setCardDetails(cardId)
+        modalContext.setIsVisible(true);
+    }
+
     return (
         <div className="flex flex-col">
             <input placeholder="Search..." onChange={onChange} />
@@ -55,7 +62,7 @@ const CardPool = () => {
                                 draggable
                                 key={card.id}
                                 onMouseEnter={() => cardContext.setCardDetails(card.id)}
-                                onClick={() => console.log('kliktanje')}
+                                onClick={(e) => handleOnClick(e, card.id)}
                                 onDragStart={(e) => handleDragStart(e,card.id)}
                                 src={`http://localhost:8000${card.cardImage}`} className=" w-20" />
                         )
