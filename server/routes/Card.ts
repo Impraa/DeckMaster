@@ -7,9 +7,9 @@ import path from "path";
 import express, { Request, Response } from 'express';
 import { isUserAdmin } from '../utils/middelware';
 import fs from 'fs';
-import { isValidCard, isValidNewCard, isValidNewMonster } from '../../types/card';
+import { isValidNewCard, isValidNewMonster } from '../../types/card';
 import Card from '../models/Card';
-import { Op, where } from 'sequelize';
+import { Op } from 'sequelize';
 import { generateImageSlug } from '../utils/helperFunctions';
 
 const router = express.Router();
