@@ -57,37 +57,53 @@ router.post('/new', isUserAdmin, upload.single('cardImage') , async (req:Request
     }
 
     card.cardImage = '/image/cardImages/' + req.file.filename;
-    console.log(card);
-    if(card.humanReadableCardType.includes('Monster') && !isValidNewMonster(card))
+
+    if (card.humanReadableCardType.includes('Monster') && !isValidNewMonster(card))
     {
+      fs.unlink(req.file.path, (err) => {
+        if (err) console.error("Failed to delete file:", err);
+      });
       res.status(400).json('Card is missing some manditory fields, please try again');
       return;
     }
     else if(!card.humanReadableCardType.includes('Monster') && !isValidNewCard(card))
     {
-        res.status(400).json('Card is missing some manditory fields, please try again');
-        return;
+      fs.unlink(req.file.path, (err) => {
+        if (err) console.error("Failed to delete file:", err);
+      });
+      res.status(400).json('Card is missing some manditory fields, please try again');
+      return;
     }
 
-    const newCard = await Card.create({...card, frameType: card.humanReadableCardType.includes('Monster') ? 'monster' : 
-      card.humanReadableCardType.includes('Spell') ? 'spell' : 'trap'});
+  try {
+    const newCard = await Card.create({
+      ...card, frameType: card.humanReadableCardType.includes('Monster') ? 'monster' :
+        card.humanReadableCardType.includes('Spell') ? 'spell' : 'trap'
+    });
 
     const newFilename = `${newCard.dataValues.id}.${req.file.originalname.split('.')[1]}`;
-    const newFilePath = path.join(__dirname, '..' , '/image/cardImages/', newFilename);
-  console.log(newFilePath);
+    const newFilePath = path.join(__dirname, '..', '/image/cardImages/', newFilename);
+
     fs.rename(req.file.path, newFilePath, async (err) => {
-      if (err)
-      {
+      if (err) {
         await newCard.destroy();
         res.status(500).json('Error saving the file');
         return;
       }
   
       newCard.dataValues.cardImage = newFilePath;
-      await newCard.update({cardImage: '/image/cardImages/' + newFilename}, { where: {id: newCard.dataValues.id}});
+      await newCard.update({ cardImage: '/image/cardImages/' + newFilename }, { where: { id: newCard.dataValues.id } });
   
       res.status(201).json({ newCard: { ...newCard.dataValues } });
     });
+    }
+    catch (error)
+    {
+      fs.unlink(req.file.path, (err) => {
+          if (err) console.error("Failed to delete file:", err);
+      });
+      res.status(500).json('Database error -' + error);
+    }
 })
 
 router.post('/cards', async (req: Request, res: Response) => {
@@ -142,7 +158,7 @@ router.delete('/delete/:id', isUserAdmin, async (req: Request, res: Response) =>
 
       await card.destroy();
 
-      res.status(200).json('Card deleted successfully');
+      res.status(200).json({ card: card});
     });
   }
   catch (error)
