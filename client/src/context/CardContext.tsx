@@ -1,7 +1,7 @@
 import { ICardContextValue } from "@/types/contextTypes";
 import { createContext, ReactNode, useMemo, useState } from "react";
 import { ICard } from "../../../types/card";
-import { fetchCardsAsync, uploadNewCardAsync } from "@services/Card";
+import { deleteCardAsync, fetchCardsAsync, uploadNewCardAsync } from "@services/Card";
 
 export const CardContext = createContext<ICardContextValue | null>(null);
 
@@ -50,12 +50,26 @@ const CardProvider:React.FC<{children: ReactNode}> = ({children}) => {
         const response = await uploadNewCardAsync(formData);
         if(!response.error)
         {
-            setCards((prevCards) => [...prevCards, response.data.newCard])
+            fetchCards(0);
         }
         setIsLoading(false);
     }
 
-    const value = useMemo(() => ({cards, card, isLoading, fetchCards, fetchCardsWithSearch, setCardDetails, uploadNewCard}), [cards, card, isLoading]);
+    const deleteCard = async (cardId: number) => {
+        setIsLoading(true);
+        const response = await deleteCardAsync(cardId);
+        if (!response.error)
+        {
+            setCards((prevCards) => prevCards.filter((card) => card.id !== response.data.card.id));
+            setCard(null);
+        }
+        setIsLoading(false);
+    }
+
+    const value = useMemo(() => ({
+        cards, card, isLoading, fetchCards, fetchCardsWithSearch, setCardDetails,
+        uploadNewCard, deleteCard
+    }), [cards, card, isLoading]);
     return <CardContext.Provider value={value}> {children} </CardContext.Provider>;
 }
 

@@ -23,9 +23,21 @@ export const uploadNewCardAsync = (formData: FormData) => {
     })
     .then(async (response) => { 
       const data = await response.json();
-      console.log(data);
       if(!response.ok) return { error: true, data: data};
       else return { error: false, data: data};
       })
     .catch((e) => ({ error: true, data: e}));
+}
+
+export const deleteCardAsync = (cardId: number) => {
+  return fetch(`http://localhost:8000/card/delete/${cardId}`, {
+    method: 'DELETE',
+    credentials: 'include'
+  })
+  .then(async (response) => {
+    const data = await response.json();
+    if (!response.ok) return { error: false, data: data };
+    else return { error: false, data: data };
+  })
+  .catch((e) => ({ error: true, data: e }));
 }

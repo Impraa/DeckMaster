@@ -20,6 +20,7 @@ export interface ICardContextValue{
     setCardDetails: (id: number) => void,
     fetchCardsWithSearch: (offset: number, searchTerm: string) => void,
     uploadNewCard: (formData: FormData) => void,
+    deleteCard: (cardId: number) => void,
 }
 
 export interface IModalContextValue{
