@@ -1,3 +1,5 @@
+import { ICard, IMonsterCard } from "../../../types/card";
+
 export const fetchCardsAsync = (offset: number, searchTerm?: string) => {
     return fetch(`http://localhost:8000/card/cards`, {
         method: 'POST',
@@ -41,3 +43,20 @@ export const deleteCardAsync = (cardId: number) => {
   })
   .catch((e) => ({ error: true, data: e }));
 }
+
+export const updateCardAsync = (id: number, formData: ICard | IMonsterCard) => {
+  return fetch(`http://localhost:8000/card/${id}`, {
+    method: 'PUT',
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formData),
+    credentials: 'include'
+  })
+  .then(async (response) => { 
+    const data = await response.json();
+    if(!response.ok) return { error: true, data: data};
+    else return { error: false, data: data};
+    })
+  .catch((e) => ({ error: true, data: e}));
+} 
