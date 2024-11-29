@@ -32,7 +32,7 @@ export const uploadNewCardAsync = (formData: FormData) => {
 }
 
 export const deleteCardAsync = (cardId: number) => {
-  return fetch(`http://localhost:8000/card/delete/${cardId}`, {
+  return fetch(`http://localhost:8000/card/${cardId}`, {
     method: 'DELETE',
     credentials: 'include'
   })

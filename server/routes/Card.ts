@@ -134,7 +134,7 @@ router.post('/cards', async (req: Request, res: Response) => {
   }
 })
 
-router.delete('/delete/:id', isUserAdmin, async (req: Request, res: Response) => {
+router.delete('/:id', isUserAdmin, async (req: Request, res: Response) => {
   const { id } = req.params;
   
   try
