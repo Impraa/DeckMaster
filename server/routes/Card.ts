@@ -19,7 +19,14 @@ const storage = multer.diskStorage({
     cb(null, "image/cardImages");
   },
   filename: (req, file, cb) => {
-    cb(null, generateImageSlug(file.originalname.split('.')[0].trim()) + path.extname(file.originalname));
+    const originalName = file.originalname.split('.')[0].trim();
+    const extension = path.extname(file.originalname);
+    const fullFilePath = path.join("image/cardImages", originalName + extension);
+
+    fs.access(fullFilePath, fs.constants.F_OK, (err) => {
+      if (!err) return cb(new Error('A file with the same name already exists'), '');
+      cb(null, generateImageSlug(originalName + extension));
+    });
   },
 });
 
@@ -52,6 +59,9 @@ router.post('/new', isUserAdmin, upload.single('cardImage') , async (req:Request
 
     if(!card)
     {
+        fs.unlink(req.file.path, (err) => {
+          if (err) console.error("Failed to delete file:", err);
+        });
         res.status(400).json('There is no card in request');
         return;
     }
@@ -132,6 +142,69 @@ router.post('/cards', async (req: Request, res: Response) => {
   {
     res.status(500).json('Database error -' + error);
   }
+})
+
+router.put('/:id', isUserAdmin, upload.single('cardImage'), async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { cardData } = req.body;
+  const card = JSON.parse(cardData);
+
+  try
+  {
+    if(!card)
+    {
+      if (req.file)
+      {
+        fs.unlink(req.file.path, (err) => {
+          if (err) console.error("Failed to delete file:", err);
+        });
+      }
+        res.status(400).json('There is no card in request');
+        return;
+    }
+
+    if (card.humanReadableCardType.includes('Monster') && !isValidNewMonster(card))
+    {
+      res.status(400).json('Card is missing some manditory fields, please try again');
+      return;
+    }
+    else if(!card.humanReadableCardType.includes('Monster') && !isValidNewCard(card))
+    {
+      res.status(400).json('Card is missing some manditory fields, please try again');
+      return;
+    }
+
+    if (req.file)
+    {
+      const newFilename = `${card.id}.${req.file.originalname.split('.')[1]}`;
+      const newFilePath = path.join(__dirname, '..', '/image/cardImages/', newFilename);
+
+      fs.rename(req.file.path, newFilePath, async (err) => {
+        if (err) {
+          res.status(500).json('Error saving the file');
+          return;
+        }
+      })
+
+      card.cardImage = newFilePath;
+    }
+  
+    await Card.update(card, { where: { id: id } });
+
+    res.status(200).json(card);
+
+  }
+  catch (error)
+  {
+    if (req.file)
+    {
+      fs.unlink(req.file.path, (err) => {
+        if (err) console.error("Failed to delete file:", err);
+      });
+    }
+    res.status(500).json('Database error -' + error);
+  }
+
 })
 
 router.delete('/:id', isUserAdmin, async (req: Request, res: Response) => {

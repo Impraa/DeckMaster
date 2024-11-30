@@ -142,7 +142,7 @@ router.put('/:id', async (req: Request, res: Response) => {
 
         const token = Jwt.sign(user.dataValues, process.env.SECRET || "tajna", { expiresIn: "24h" });
 
-        res.status(201).cookie("USER_TOKEN", token, { secure: true, httpOnly: true, maxAge: 86_400_000 }).json(user.dataValues);
+        res.status(200).cookie("USER_TOKEN", token, { secure: true, httpOnly: true, maxAge: 86_400_000 }).json(user.dataValues);
     } 
     catch (error) 
     {
