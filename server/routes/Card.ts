@@ -144,6 +144,32 @@ router.post('/cards', async (req: Request, res: Response) => {
   }
 })
 
+router.get('/:id', isUserAdmin, async (req: Request, res: Response) => {
+  const { id } = req.params;
+  if (!id)
+  {
+    res.status(400).json('Id must be included');
+    return;
+  }
+
+  try
+  {
+    const card = await Card.findByPk(id);
+
+    if (!card)
+    {
+      res.status(404).json('Card not found');
+      return;
+    }
+    
+    res.status(200).json({ card: card });
+  }
+  catch (error)
+  {
+    res.status(500).json('Database error -' + error);
+  }
+})
+
 router.put('/:id', isUserAdmin, upload.single('cardImage'), async (req: Request, res: Response) => {
   const { id } = req.params;
   const { cardData } = req.body;
