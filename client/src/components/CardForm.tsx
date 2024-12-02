@@ -4,9 +4,10 @@ import Dropdown, { Option } from 'react-dropdown';
 import 'react-dropdown/style.css';
 import useCallContext from "@hooks/useCallContext";
 import { CardContext } from "@context/CardContext";
-import { Navigate } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 
-const AddNewCardForm = () => {
+const CardForm = () => {
+    const { id } = useParams();
     const cardContext = useCallContext(CardContext);
     const [typeOfCard, setTypeOfCard] = useState<null | 'monster' | 'spell' | 'trap'>(null);
     const [formData, setFormData] = useState<null | ICard | IMonsterCard>(null);
@@ -14,6 +15,19 @@ const AddNewCardForm = () => {
     const [cardRaces, setCardRaces] = useState<string[]>([]);
     const [attributeTypes] = useState<string[]>(AttributeTypes);
     const [cardImage, setCardImage] = useState<File | null>(null);
+
+    useEffect(() => {
+        if (id && !isNaN(+id) && cardContext) cardContext.getCard(+id); 
+    }, [id])
+
+    useEffect(() => {
+        if (cardContext && cardContext.card)
+        {
+            console.log(cardContext.card.humanReadableCardType.split(' '));
+            const cardType = cardContext.card.humanReadableCardType.split(' ')[--cardContext.card.humanReadableCardType.split(' ').length].toLocaleLowerCase() as 'spell' | 'trap' | 'monster';
+            setTypeOfCard(cardType);
+        }
+    }, [cardContext])
 
     useEffect(() => {
         if (typeOfCard)
@@ -64,7 +78,7 @@ const AddNewCardForm = () => {
 
     return (
         <div className="flex flex-col items-center w-full">
-            <select onChange={e => setTypeOfCard(e.currentTarget.value as 'monster' | 'spell' | 'trap')}>
+            <select onChange={e => setTypeOfCard(e.currentTarget.value as 'monster' | 'spell' | 'trap')} value={typeOfCard as string ?? ''}>
                 <option hidden>Please select a card type</option>
                 <option value="monster">Monster card</option>
                 <option value="spell">Spell card</option>
@@ -93,4 +107,4 @@ const AddNewCardForm = () => {
     )
 }
 
-export default AddNewCardForm;
+export default CardForm;

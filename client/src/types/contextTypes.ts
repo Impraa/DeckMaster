@@ -17,6 +17,7 @@ export interface ICardContextValue{
     card: ICard | null,
     isLoading: boolean,
     fetchCards: (offset: number) => void,
+    getCard: (id: number) => void,
     setCardDetails: (id: number) => void,
     fetchCardsWithSearch: (offset: number, searchTerm: string) => void,
     uploadNewCard: (formData: FormData) => void,

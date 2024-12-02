@@ -1,10 +1,10 @@
-import AddNewCardForm from "@components/AddNewCardForm";
+import CardForm from "@components/CardForm";
 import { UserContext } from "@context/UserContext";
 import useCallContext from "@hooks/useCallContext";
 import { useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const AddCard = () => {
+const Card = () => {
 
     const userContext = useCallContext(UserContext);
     const navigate = useNavigate();
@@ -17,9 +17,9 @@ const AddCard = () => {
     return (
         <div>
             Add Card
-            <AddNewCardForm/>
+            <CardForm/>
         </div>
     )
 }
 
-export default AddCard;
+export default Card;

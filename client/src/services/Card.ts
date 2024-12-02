@@ -44,6 +44,22 @@ export const deleteCardAsync = (cardId: number) => {
   .catch((e) => ({ error: true, data: e }));
 }
 
+export const getCardAsync = (id: number) => {
+  return fetch(`http://localhost:8000/card/${id}`, {
+    method: 'GET',
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: 'include'
+  })
+  .then(async (response) => { 
+    const data = await response.json();
+    if(!response.ok) return { error: true, data: data};
+    else return { error: false, data: data};
+    })
+  .catch((e) => ({ error: true, data: e}));
+}
+
 export const updateCardAsync = (id: number, formData: ICard | IMonsterCard) => {
   return fetch(`http://localhost:8000/card/${id}`, {
     method: 'PUT',
