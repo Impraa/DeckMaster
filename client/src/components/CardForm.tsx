@@ -26,6 +26,7 @@ const CardForm = () => {
             console.log(cardContext.card.humanReadableCardType.split(' '));
             const cardType = cardContext.card.humanReadableCardType.split(' ')[--cardContext.card.humanReadableCardType.split(' ').length].toLocaleLowerCase() as 'spell' | 'trap' | 'monster';
             setTypeOfCard(cardType);
+            setFormData(cardContext.card);
         }
     }, [cardContext])
 
@@ -86,8 +87,8 @@ const CardForm = () => {
             </select>
             { typeOfCard && (
                 <form className="flex flex-col w-[75vw]" onSubmit={handleSubmit} encType="multipart/form-data">
-                    <input type="text" placeholder="Card Name" name="name" onChange={handleFormChange} />
-                    <textarea placeholder="Card text" name="cardText" onChange={handleFormChange}></textarea>
+                    <input type="text" placeholder="Card Name" name="name" onChange={handleFormChange} value={formData?.name ?? ''} />
+                    <textarea placeholder="Card text" name="cardText" onChange={handleFormChange} value={formData?.cardText ?? ''}></textarea>
                     <label htmlFor="cardImage">Card Image upload</label>
                     <input type="file" id="cardImage" name="cardImage" className="hidden" onChange={handleImageUpload}/>
                     {cardImage && <p>Uploaded: {cardImage.name}</p>}
