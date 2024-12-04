@@ -6,11 +6,12 @@ import multer from "multer";
 import path from "path";
 import express, { Request, Response } from 'express';
 import { isUserAdmin } from '../utils/middelware';
-import fs from 'fs';
+import fs, { PathLike } from 'fs';
 import { isValidNewCard, isValidNewMonster } from '../../types/card';
 import Card from '../models/Card';
 import { Op } from 'sequelize';
 import { generateImageSlug } from '../utils/helperFunctions';
+import { NextFunction } from 'express-serve-static-core';
 
 const router = express.Router();
 
@@ -46,6 +47,61 @@ const upload = multer({
     cb(null, false);
   },
 });
+
+const optionalUploadMiddleware = (req:Request, res:Response, next:NextFunction) => {
+  if (req.method === "PUT" || req.file)
+  {
+    upload.single("cardImage")(req, res, (err) => {
+      if (err && err.code === "LIMIT_UNEXPECTED_FILE") return next();
+      next(err);
+    });
+  }
+};
+
+const searchAndDeleteFile = async (directory: PathLike, fileNamePart: string, extensions: string[]): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    fs.readdir(directory, (err, files) => {
+      if (err)
+      {
+        console.error('Error reading directory:', err);
+        return reject(err);
+      }
+
+      const matchingFiles = files.filter(file => {
+        const fileExtension = path.extname(file).toLowerCase();
+        return (
+          file.includes(fileNamePart) &&
+          extensions.includes(fileExtension)
+        );
+      });
+
+      if (matchingFiles.length > 0)
+      {
+        let deleteCount = 0;
+
+        matchingFiles.forEach(file => {
+          const filePath = path.join(directory.toString(), file);
+
+          fs.unlink(filePath, (err) => {
+            if (err)
+            {
+              console.error(`Failed to delete file: ${filePath}`, err);
+              return reject(err);
+            }
+
+            deleteCount++;
+
+            if (deleteCount === matchingFiles.length)
+            {
+              resolve();
+            }
+          });
+        });
+      }
+      else resolve();
+    });
+  });
+};
 
 router.post('/new', isUserAdmin, upload.single('cardImage') , async (req:Request, res: Response) => {
     const { cardData } = req.body;
@@ -170,38 +226,34 @@ router.get('/:id', isUserAdmin, async (req: Request, res: Response) => {
   }
 })
 
-router.put('/:id', isUserAdmin, upload.single('cardImage'), async (req: Request, res: Response) => {
+router.put('/:id', isUserAdmin, optionalUploadMiddleware, async (req: Request, res: Response) => {
   const { id } = req.params;
   const { cardData } = req.body;
   const card = JSON.parse(cardData);
 
-  try
-  {
-    if(!card)
-    {
-      if (req.file)
-      {
+  try {
+    if (!card) {
+      if (req.file) {
         fs.unlink(req.file.path, (err) => {
           if (err) console.error("Failed to delete file:", err);
         });
       }
-        res.status(400).json('There is no card in request');
-        return;
+      res.status(400).json('There is no card in request');
+      return;
     }
 
-    if (card.humanReadableCardType.includes('Monster') && !isValidNewMonster(card))
-    {
+    if (card.humanReadableCardType.includes('Monster') && !isValidNewMonster(card)) {
       res.status(400).json('Card is missing some manditory fields, please try again');
       return;
     }
-    else if(!card.humanReadableCardType.includes('Monster') && !isValidNewCard(card))
-    {
+    else if (!card.humanReadableCardType.includes('Monster') && !isValidNewCard(card)) {
       res.status(400).json('Card is missing some manditory fields, please try again');
       return;
     }
 
     if (req.file)
     {
+      await searchAndDeleteFile(path.resolve(__dirname, '..', 'image/cardImages/'), card.id, ['.png', '.jpeg', '.jpg'])
       const newFilename = `${card.id}.${req.file.originalname.split('.')[1]}`;
       const newFilePath = path.join(__dirname, '..', '/image/cardImages/', newFilename);
 
@@ -212,12 +264,12 @@ router.put('/:id', isUserAdmin, upload.single('cardImage'), async (req: Request,
         }
       })
 
-      card.cardImage = newFilePath;
+      card.cardImage = '/image/cardImages/' + newFilename;
     }
   
     await Card.update(card, { where: { id: id } });
 
-    res.status(200).json(card);
+    res.status(200).json({card: card});
 
   }
   catch (error)
