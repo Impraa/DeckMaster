@@ -3,7 +3,7 @@ import { ModalContext } from "@context/ModalContext";
 import { UserContext } from "@context/UserContext";
 import useCallContext from "@hooks/useCallContext";
 import { useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 const ModalDetails = () => {
 
@@ -35,7 +35,7 @@ const ModalDetails = () => {
                         {user && user.role === 'ADMIN' ? 
                             <>
                                 <button onClick={handleDeleteClick}>Delete card</button>
-                                <button>Update card</button>
+                                <Link to={`/card/${card.id}`}>Update card</Link>
                             </>: <></>}
                     </div>
                 </>

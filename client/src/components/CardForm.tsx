@@ -9,6 +9,7 @@ import { Navigate, useParams } from "react-router-dom";
 const CardForm = () => {
     const { id } = useParams();
     const cardContext = useCallContext(CardContext);
+    const [isUpdate, setIsUpdate] = useState<boolean>(false);
     const [typeOfCard, setTypeOfCard] = useState<null | 'monster' | 'spell' | 'trap'>(null);
     const [formData, setFormData] = useState<null | ICard | IMonsterCard>(null);
     const [humanReadbleTypes, setHumanReadableTypes] = useState<string[]>([]);
@@ -17,7 +18,11 @@ const CardForm = () => {
     const [cardImage, setCardImage] = useState<File | null>(null);
 
     useEffect(() => {
-        if (id && !isNaN(+id) && cardContext) cardContext.getCard(+id); 
+        if (id && !isNaN(+id) && cardContext)
+        {
+            cardContext.getCard(+id);
+            setIsUpdate(true);
+        }
     }, [id])
 
     useEffect(() => {
@@ -67,13 +72,11 @@ const CardForm = () => {
         if(formData && typeOfCard)
         {
             if(!formData.race) formData.race = formData.humanReadableCardType.split(typeOfCard[0].toLocaleUpperCase() + typeOfCard.slice(1))[0].trim() as RaceType;
-            if(cardImage)
-            {
-                const submissionData = new FormData();
-                submissionData.append('cardImage', cardImage);
-                submissionData.append('cardData', JSON.stringify(formData));
-                cardContext.uploadNewCard(submissionData);
-            }
+            const submissionData = new FormData();
+            if(cardImage) submissionData.append('cardImage', cardImage);
+            submissionData.append('cardData', JSON.stringify(formData));
+            if (isUpdate && id) cardContext.updateCard(+id, submissionData);
+            else if(cardImage) cardContext.uploadNewCard(submissionData);
         }
     }
 
@@ -92,14 +95,14 @@ const CardForm = () => {
                     <label htmlFor="cardImage">Card Image upload</label>
                     <input type="file" id="cardImage" name="cardImage" className="hidden" onChange={handleImageUpload}/>
                     {cardImage && <p>Uploaded: {cardImage.name}</p>}
-                    <Dropdown onChange={(e) => {handleDropdownChange(e, 'humanReadableCardType')}} options={humanReadbleTypes} />
+                    <Dropdown onChange={(e) => {handleDropdownChange(e, 'humanReadableCardType')}} options={humanReadbleTypes} value={formData?.humanReadableCardType ?? ''} />
                     {typeOfCard === 'monster' ?
                         <>
-                            <Dropdown options={cardRaces} onChange={(e) => {handleDropdownChange(e, 'race')}} />
-                            <Dropdown options={attributeTypes} onChange={(e) => {handleDropdownChange(e, 'attribute')}}/>
-                            <input type="number" min={0} max={12} placeholder="Level" name="level" onChange={handleFormChange} />
-                            <input type="number" min={0} placeholder="ATK" name="atk" onChange={handleFormChange} />
-                            <input type="number" min={0} placeholder="DEF" name="def" onChange={handleFormChange} />
+                            <Dropdown options={cardRaces} onChange={(e) => {handleDropdownChange(e, 'race')}} value={formData?.race ?? ''} />
+                            <Dropdown options={attributeTypes} onChange={(e) => {handleDropdownChange(e, 'attribute')}} value={formData?.attribute ?? ''}/>
+                            <input type="number" min={0} max={12} placeholder="Level" name="level" onChange={handleFormChange} value={formData?.level ?? ''} />
+                            <input type="number" min={0} placeholder="ATK" name="atk" onChange={handleFormChange} value={formData?.atk ?? ''}/>
+                            <input type="number" min={0} placeholder="DEF" name="def" onChange={handleFormChange} value={formData?.def ?? ''}/>
                         </> : <></>}
                     <button type="submit">Save</button>
                 </form>      

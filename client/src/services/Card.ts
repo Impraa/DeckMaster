@@ -1,5 +1,3 @@
-import { ICard, IMonsterCard } from "../../../types/card";
-
 export const fetchCardsAsync = (offset: number, searchTerm?: string) => {
     return fetch(`http://localhost:8000/card/cards`, {
         method: 'POST',
@@ -60,13 +58,10 @@ export const getCardAsync = (id: number) => {
   .catch((e) => ({ error: true, data: e}));
 }
 
-export const updateCardAsync = (id: number, formData: ICard | IMonsterCard) => {
+export const updateCardAsync = (id: number, formData: FormData) => {
   return fetch(`http://localhost:8000/card/${id}`, {
     method: 'PUT',
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(formData),
+    body: formData,
     credentials: 'include'
   })
   .then(async (response) => { 

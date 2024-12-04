@@ -1,7 +1,7 @@
 import { ICardContextValue } from "@/types/contextTypes";
 import { createContext, ReactNode, useMemo, useState } from "react";
 import { ICard } from "../../../types/card";
-import { deleteCardAsync, fetchCardsAsync, getCardAsync, uploadNewCardAsync } from "@services/Card";
+import { deleteCardAsync, fetchCardsAsync, getCardAsync, updateCardAsync, uploadNewCardAsync } from "@services/Card";
 
 export const CardContext = createContext<ICardContextValue | null>(null);
 
@@ -76,9 +76,22 @@ const CardProvider:React.FC<{children: ReactNode}> = ({children}) => {
         setIsLoading(false);
     }
 
+    const updateCard = async (id: number,formData: FormData) => {
+        setIsLoading(true);
+        const response = await updateCardAsync(id, formData);
+        console.log(response);
+        if (!response.error)
+        {
+            const index = cards.findIndex((card) => card.id === response.data.card.id);
+            if (index !== -1) cards.splice(index, 1, response.data.card);
+            setCard(response.data.card)
+        }
+        setIsLoading(false);
+    }
+
     const value = useMemo(() => ({
         cards, card, isLoading, fetchCards, fetchCardsWithSearch, setCardDetails,
-        uploadNewCard, deleteCard, getCard
+        uploadNewCard, deleteCard, updateCard, getCard
     }), [cards, card, isLoading]);
     return <CardContext.Provider value={value}> {children} </CardContext.Provider>;
 }
