@@ -11,6 +11,7 @@ import Utils from './routes/Utils';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import path from 'path';
+import Decklist from './routes/Decklist';
 
 
 const app: Application = express();
@@ -25,6 +26,7 @@ app.use(express.json({ limit: "10mb" }));
 
 app.use("/user", User);
 app.use("/card", Card);
+app.use("/decklist", Decklist);
 if (process.env.NODE_DEV === 'dev') app.use("/utils", Utils);
 
 app.all("*", (req: Request, res: Response) => {
