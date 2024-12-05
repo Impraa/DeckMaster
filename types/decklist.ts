@@ -1,10 +1,15 @@
-export interface Decklist {
+import { ICard, IMonsterCard } from './card';
+
+export interface IDecklist {
     id: number,
-    name:string,
+    name: string,
+    mainDeck: Array<ICard | IMonsterCard>,
+    extraDeck: Array<ICard | IMonsterCard>,
+    sideDeck: Array<ICard | IMonsterCard>,
 }
 
-export type createDecklist = Omit<Decklist, 'id'>;
+export type createDecklist = Omit<IDecklist, 'id'>;
 
-export const isValidDecklist = (decklist: Decklist): decklist is Decklist => {
+export const isValidDecklist = (decklist: IDecklist): decklist is IDecklist => {
     return typeof decklist.name === 'string' && typeof decklist.id === 'number';
 }

@@ -1,5 +1,6 @@
 import { IUpdateUserData, IUser, LoginUser } from "../../../types/user";
 import { ICard } from '../../../types/card';
+import { IDecklist } from '../../../types/decklist';
 import React from "react";
 
 export interface IUserContextValue{
@@ -28,4 +29,9 @@ export interface ICardContextValue{
 export interface IModalContextValue{
     isVisible: boolean,
     setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export interface IDecklistContextValue{
+    decklist: IDecklist | null
+    isLoading: boolean,
 }

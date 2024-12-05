@@ -8,18 +8,21 @@ import Loading from '@components/Loading.tsx'
 import CardProvider from '@context/CardContext.tsx'
 import ModalProvider from '@context/ModalContext.tsx'
 import Modal from '@layout/Modal.tsx'
+import DecklistProvider from '@context/DecklistContext.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
     <StrictMode>
       <Suspense fallback={<Loading />}>
         <UserProvider>
-          <CardProvider>
-            <ModalProvider>
-              <Modal/>
-              <Router />
-            </ModalProvider>
-          </CardProvider>  
+          <DecklistProvider>
+            <CardProvider>
+              <ModalProvider>
+                <Modal/>
+                <Router />
+              </ModalProvider>
+            </CardProvider>
+          </DecklistProvider>
         </UserProvider>
       </Suspense>
     </StrictMode>
