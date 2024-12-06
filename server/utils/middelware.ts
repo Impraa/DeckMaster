@@ -15,7 +15,11 @@ export const authenticateJWT = (req:Request, res:Response, next:NextFunction) =>
     }
     try 
     {
-        jwt.verify(token, process.env.SECRET || "tajna");
+      const user = jwt.verify(token, process.env.SECRET || "tajna");
+      if (typeof user === 'object' && user !== null)
+      {
+        req.body.user = user;
+      }
     } 
     catch (error) 
     {
