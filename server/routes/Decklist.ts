@@ -7,9 +7,10 @@ import { IDecklist, isValidDecklist } from '../../types/decklist';
 import Decklist from '../models/Decklist';
 import Card from '../models/Card';
 import CardDecklist from '../models/CardDecklist';
-import { where } from 'sequelize';
+import { QueryTypes } from 'sequelize';
 import { authenticateJWT } from '../utils/middelware';
 import UserDecklist from '../models/UserDecklist';
+import { sequelize } from '../utils/database';
 
 const router = express.Router();
 
@@ -26,6 +27,40 @@ router.post('/new', async (req: Request, res: Response) => {
         res.status(201).json({ decklist: newDecklist.dataValues });
     }
     catch (error)
+    {
+        res.status(500).json('Database error - ' + error);
+    }
+})
+
+router.get("/allCards/:id", async (req: Request, res: Response) => {
+    const { id } = req.params;
+    if (!id)
+    {
+        res.status(400).json('The decklist id must be included');
+        return;
+    }
+
+    try
+    {
+        const allDecklistCards = await sequelize.query(
+            `SELECT c.*, cd.quantity, cd.partOfDeck
+             FROM card_decklist cd
+             JOIN cards c ON cd.cardId = c.id
+             WHERE cd.decklistId = :decklistId`,
+            {
+                replacements: { decklistId: id },
+                type: QueryTypes.SELECT
+            }
+        );
+        if (allDecklistCards.length < 1)
+        {
+            res.status(404).json('Decklist has no cards');
+            return;
+        }
+
+        res.status(200).json({ decklist: allDecklistCards });
+    }
+    catch(error)
     {
         res.status(500).json('Database error - ' + error);
     }
@@ -93,7 +128,12 @@ router.post('/add/:id', authenticateJWT, async (req: Request, res: Response) => 
         }
         else
         {
-            await foundCardInDecklist.update({ quantity: req.body.quantity, partOfDeck: req.body.partOfDeck },
+            if (foundCardInDecklist.dataValues.quantity === 3)
+            {
+                res.status(400).json('Max 3 cards');
+                return;
+            }
+            await foundCardInDecklist.update({ quantity: foundCardInDecklist.dataValues.quantity + 1 },
                 { where: { cardId: foundCard.dataValues.id, decklistId: decklist.id } });
             const updatedCardInDecklist = await CardDecklist.findOne({ where: { cardId: foundCard.dataValues.id, decklistId: decklist.id } });
             res.status(201).json(updatedCardInDecklist!.dataValues);

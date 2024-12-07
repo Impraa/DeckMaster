@@ -25,24 +25,26 @@ const CardDecklist = sequelize.define("card_decklist", {
     cardId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        unique: false,
         references: {
           model: Card,
           key: "id",
         },
-        onDelete: 'cascade',
       },
       decklistId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        unique: false,
         references: {
           model: Decklist,
           key: "id",
           },
-        onDelete: 'cascade',
       },
+}, {
+    tableName: "card_decklist", 
 });
 
-Card.belongsToMany(Decklist, { through: CardDecklist });
-Decklist.belongsToMany(Card, { through: CardDecklist });
+Card.belongsToMany(Decklist, { through: CardDecklist, foreignKey: "cardId", as: "decklist" });
+Decklist.belongsToMany(Card, { through: CardDecklist, foreignKey: "decklistId", as: "cards" });
 
 export default CardDecklist;

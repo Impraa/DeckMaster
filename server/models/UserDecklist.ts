@@ -16,17 +16,18 @@ const UserDecklist = sequelize.define("user_decklist", {
           model: User,
           key: "id",
         },
-        onDelete: 'cascade',
       },
       decklistId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        unique: false,
         references: {
           model: Decklist,
           key: "id",
         },
-        onDelete: 'cascade',
       },
+} , {
+  tableName: "user_decklist",
 });
 
 User.belongsToMany(Decklist, { through: UserDecklist });
