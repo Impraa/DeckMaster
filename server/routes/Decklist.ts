@@ -61,70 +61,21 @@ router.get("/allCards/:id", async (req: Request, res: Response) => {
     }
 })
 
-router.delete('/:decklistId/card/:cardId', authenticateJWT, async (req: Request, res: Response) => {
-    const { decklistId, cardId } = req.params;
-    if (!decklistId || !cardId)
-    {
-        res.status(400).json('Decklist Id and Card Id must be included');
-        return;
-    }
-
-    try
-    {
-         const isUserPremitted = await sequelize.query(
-            `SELECT ud.decklistId
-                FROM user_decklist ud
-                JOIN users u ON u.id = ud.userId
-                WHERE (u.role LIKE :userRole OR ud.userId = 2) AND ud.decklistId = 8;`,
-            {
-                replacements: { decklistId: decklistId, userId: req.body.user.id, userRole: req.body.user.role },
-                type: QueryTypes.SELECT
-            }
-        );
-
-        if (isUserPremitted.length < 1)
-        {
-            res.status(403).json('You are not premitted to change this deck');
-            return;
-        }
-
-        const foundCardInDecklist = await CardDecklist.findOne({ where: { cardId: cardId, decklistId: decklistId } });
-        if (!foundCardInDecklist)
-        {
-            res.status(404).json('Card is not in the decklist');
-            return;
-        }
-        if (foundCardInDecklist.dataValues.quantity > 1)
-        {
-            const cardInDeck = await foundCardInDecklist.update({ quantity: foundCardInDecklist.dataValues.quantity - 1 },
-                { where: { cardId: cardId, decklistId: decklistId } });
-            res.status(200).json(cardInDeck.dataValues);
-        }
-        else
-        {
-            await foundCardInDecklist.destroy();
-            res.status(200).json('Card has been deleted');
-        }
-    }
-    catch (error)
-    {
-        res.status(500).json('Database error - '+ error);   
-    }
-})
-
-router.post('/:decklistId/card/:cardId', authenticateJWT, async (req: Request, res: Response) => {
-    let reqDecklist:null | IDecklist = null;
+router.post('/card/:id', authenticateJWT, async (req: Request, res: Response) => {
+    let reqDecklist: null | IDecklist = null;
+    const { quantity, partOfDeck } = req.body;
+    const { id } = req.params;  
     if (req.body.decklist)
     {
         reqDecklist = req.body.decklist;
     }
-    if (!req.body.quantity || !req.body.partOfDeck)
+    if (!quantity || !partOfDeck)
     {
         res.status(400).json('You are missing quantity and part of deck propertyes from body');
         return;
     }
 
-    if (!req.params.cardId)
+    if (!id)
     {
         res.status(400).json('Card id is missing');
         return;
@@ -132,7 +83,7 @@ router.post('/:decklistId/card/:cardId', authenticateJWT, async (req: Request, r
 
     try
     {
-        const foundCard = await Card.findOne({ where: { id: req.params.cardId } });
+        const foundCard = await Card.findOne({ where: { id: id } });
         if (!foundCard)
         {
             res.status(404).json("Card dosen't exist");
@@ -188,6 +139,57 @@ router.post('/:decklistId/card/:cardId', authenticateJWT, async (req: Request, r
     catch (error)
     {
         res.status(500).json('Database error - ' + error);
+    }
+})
+
+router.delete('/:decklistId/card/:cardId', authenticateJWT, async (req: Request, res: Response) => {
+    const { decklistId, cardId } = req.params;
+    if (!decklistId || !cardId)
+    {
+        res.status(400).json('Decklist Id and Card Id must be included');
+        return;
+    }
+
+    try
+    {
+         const isUserPremitted = await sequelize.query(
+            `SELECT ud.decklistId
+                FROM user_decklist ud
+                JOIN users u ON u.id = ud.userId
+                WHERE (u.role LIKE :userRole OR ud.userId = 2) AND ud.decklistId = 8;`,
+            {
+                replacements: { decklistId: decklistId, userId: req.body.user.id, userRole: req.body.user.role },
+                type: QueryTypes.SELECT
+            }
+        );
+
+        if (isUserPremitted.length < 1)
+        {
+            res.status(403).json('You are not premitted to change this deck');
+            return;
+        }
+
+        const foundCardInDecklist = await CardDecklist.findOne({ where: { cardId: cardId, decklistId: decklistId } });
+        if (!foundCardInDecklist)
+        {
+            res.status(404).json('Card is not in the decklist');
+            return;
+        }
+        if (foundCardInDecklist.dataValues.quantity > 1)
+        {
+            const cardInDeck = await foundCardInDecklist.update({ quantity: foundCardInDecklist.dataValues.quantity - 1 },
+                { where: { cardId: cardId, decklistId: decklistId } });
+            res.status(200).json(cardInDeck.dataValues);
+        }
+        else
+        {
+            await foundCardInDecklist.destroy();
+            res.status(200).json('Card has been deleted');
+        }
+    }
+    catch (error)
+    {
+        res.status(500).json('Database error - '+ error);   
     }
 })
 
