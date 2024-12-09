@@ -193,4 +193,23 @@ router.delete('/:decklistId/card/:cardId', authenticateJWT, async (req: Request,
     }
 })
 
+router.put("/:id", async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { name } = req.body;
+    if (!id || !name) 
+    {
+        res.status(400).send('Id and name is required');
+    }
+    try
+    {
+        await Decklist.update({ name: name }, { where: { id: id } });
+        const decklist = await Decklist.findByPk(id);
+        res.status(200).json(decklist);
+    }
+    catch (error)
+    {
+        res.status(500).json('Database error - ' + error);    
+    }
+})
+
 export default router;
