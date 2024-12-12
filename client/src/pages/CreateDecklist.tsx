@@ -15,7 +15,7 @@ const CreateDecklist = () => {
     }, [userContext, navigate])
 
     return(
-        <div className="grid grid-cols-[1fr_2fr_1fr] p-5">
+        <div className="grid grid-cols-[1fr_2fr_1fr] px-5 pt-4 gap-x-2">
             <CardDetails />
             <ChangableDecklist />
             <CardPool />

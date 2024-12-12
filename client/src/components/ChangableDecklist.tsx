@@ -15,9 +15,18 @@ const ChangableDecklist = () => {
 
     return (
         <div onDragOver={onDragOverHandler} onDrop={onDropHandler}>
-            <div id="mainDeck"> </div>
-            <div id="extraDeck"> </div>
-            <div id="sideDeck"> </div>
+            <div id="mainDeck" className="h-[50vh]"> 
+                <h2>Main deck</h2>
+                <hr/>
+            </div>
+            <div id="extraDeck" className="h-[15vh]"> 
+                <h2>Extra deck</h2>
+                <hr/>
+            </div>
+            <div id="sideDeck" className="h-[15vh]"> 
+                <h2>Side deck</h2>
+                <hr/>
+            </div>
         </div>)
 }
 
