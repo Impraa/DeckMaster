@@ -2,6 +2,7 @@ import { IDecklistContextValue } from "@/types/contextTypes";
 import { createContext, ReactNode, useMemo, useState } from "react";
 import { IDecklist, isValidDecklist } from "../../../types/decklist";
 import { fetchAllCardsAsync } from "@services/Decklist";
+import { ICard, IMonsterCard } from "../../../types/card";
 
 export const DecklistContext = createContext<IDecklistContextValue | null>(null);
 
@@ -14,17 +15,25 @@ const DecklistProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         const response = await fetchAllCardsAsync(id);
         if (!response.error)
         {
-            setDecklist(() => ({ id: response.data.decklist.id, name: response.data.decklist.name, extraDeck: [], mainDeck: [], sideDeck: []}));
-            if ( decklist && isValidDecklist(decklist))
-            {
-                for (const card of response.data.decklist.allCards)
-                {
-                    if (card.partOfDeck == 'extraDeck') decklist.extraDeck.push(card);
-                    else if (card.partOfDeck == 'mainDeck') decklist.mainDeck.push(card);
-                    else decklist.sideDeck.push(card);
-                }
+            const processedDecklist: IDecklist = {
+                id: response.data.decklist.id,
+                name: response.data.decklist.name,
+                extraDeck: [],
+                mainDeck: [],
+                sideDeck: []
+            };
             
+            if (response.data.decklist.allCards && isValidDecklist(processedDecklist))
+            {
+                for (const card of response.data.decklist.allCards as (ICard | IMonsterCard)[])
+                {
+                    if (card.partOfDeck === 'extraDeck') processedDecklist.extraDeck.push(card);
+                    else if (card.partOfDeck === 'mainDeck') processedDecklist.mainDeck.push(card);
+                    else processedDecklist.sideDeck.push(card);
+                }
             }
+            
+            setDecklist(processedDecklist);
         }
     }
 

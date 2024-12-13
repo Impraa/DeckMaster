@@ -262,6 +262,8 @@ export interface ICard {
     cardText: string,
     cardImage: string,
     race: RaceType,
+    quantity?: number,
+    partOfDeck?: 'extraDeck' | 'mainDeck' | 'sideDeck',
     banOcg?: BanType,
     banTcg?: BanType,
     banGoat?: BanType,

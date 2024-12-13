@@ -39,8 +39,9 @@ const CardProvider:React.FC<{children: ReactNode}> = ({children}) => {
     }
 
     const setCardDetails = (id: number) => {
-        const card = cards.find((item) => item.id === id) ?? null;
-        setCard(card);
+        const card = cards.find((item) => item.id === id);
+        if (card) setCard(card);
+        else getCard(id); 
     }
 
     const fetchCardsWithSearch = async (offset: number, searchTerm: string) => {

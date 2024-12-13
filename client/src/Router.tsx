@@ -21,7 +21,7 @@ function Router() {
         <Route index element={<Home/>}/> 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/create-decklist" element={<CreateDecklist/>} />
+        <Route path="/create-decklist/:id?" element={<CreateDecklist/>} />
         <Route path="/card/:id?" element={<Card/>} />
         <Route path="/manage-cards" element={<ManageCards/>} />
         <Route path="/decklist/:id" element={<SingleDecklist/>} />
