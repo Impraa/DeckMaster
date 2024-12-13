@@ -37,6 +37,13 @@ router.get("/allCards/:id", async (req: Request, res: Response) => {
 
     try
     {
+        const decklist = await Decklist.findOne({ where: { id: id } });
+        if (!decklist)
+        {
+            res.status(404).json("Decklist dosen't exist");
+            return;
+        }
+
         const allDecklistCards = await sequelize.query(
             `SELECT c.*, cd.quantity, cd.partOfDeck
              FROM card_decklist cd
@@ -53,7 +60,7 @@ router.get("/allCards/:id", async (req: Request, res: Response) => {
             return;
         }
 
-        res.status(200).json({ decklist: allDecklistCards });
+        res.status(200).json({ decklist: { id:decklist.dataValues.id, name:decklist.dataValues.name,  allCards: allDecklistCards} });
     }
     catch(error)
     {

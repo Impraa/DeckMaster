@@ -34,4 +34,5 @@ export interface IModalContextValue{
 export interface IDecklistContextValue{
     decklist: IDecklist | null
     isLoading: boolean,
+    fetchAllCards: (id: number) => void,
 }

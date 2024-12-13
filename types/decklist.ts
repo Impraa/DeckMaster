@@ -11,5 +11,6 @@ export interface IDecklist {
 export type createDecklist = Omit<IDecklist, 'id'>;
 
 export const isValidDecklist = (decklist: IDecklist): decklist is IDecklist => {
-    return typeof decklist.name === 'string' && typeof decklist.id === 'number';
+    return typeof decklist.name === 'string' && typeof decklist.id === 'number' && Array.isArray(decklist.mainDeck)
+        && Array.isArray(decklist.extraDeck) && Array.isArray(decklist.sideDeck);
 }
