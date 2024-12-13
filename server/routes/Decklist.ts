@@ -98,7 +98,7 @@ router.post('/card/:id', authenticateJWT, async (req: Request, res: Response) =>
         }
 
         let decklist:null | IDecklist = null;
-        if (reqDecklist && isValidDecklist(reqDecklist as unknown as IDecklist))
+        if (reqDecklist && isValidDecklist(reqDecklist))
         {   
             const foundDecklist = await Decklist.findOne({ where: { id: reqDecklist.id } })
             if (!foundDecklist)
