@@ -24,9 +24,11 @@ const ChangableDecklist = () => {
     const onDropHandler = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         const cardId = e.dataTransfer.getData("cardId");
+        const targetId = (e.target as HTMLElement).id;
         if (cardId) 
         {
-            console.log(`Dropped into decklist`);
+
+            console.log(targetId);
         }
     }
 
