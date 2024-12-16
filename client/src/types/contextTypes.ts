@@ -1,6 +1,6 @@
 import { IUpdateUserData, IUser, LoginUser } from "../../../types/user";
 import { ICard } from '../../../types/card';
-import { IDecklist } from '../../../types/decklist';
+import { IAddCard, IDecklist } from '../../../types/decklist';
 import React from "react";
 
 export interface IUserContextValue{
@@ -32,7 +32,8 @@ export interface IModalContextValue{
 }
 
 export interface IDecklistContextValue{
-    decklist: IDecklist | null
+    decklist: IDecklist | null,
     isLoading: boolean,
     fetchAllCards: (id: number) => void,
+    addCardToDecklist: (fromData: IAddCard, cardId:number) => void
 }

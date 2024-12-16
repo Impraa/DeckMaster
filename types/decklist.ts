@@ -8,6 +8,12 @@ export interface IDecklist {
     sideDeck: Array<ICard | IMonsterCard>,
 }
 
+export interface IAddCard {
+    decklist?: IDecklist,
+    quantity: number,
+    partOfDeck: 'extraDeck' | 'mainDeck' | 'sideDeck'
+}
+
 export type createDecklist = Omit<IDecklist, 'id'>;
 
 export const isValidDecklist = (decklist: IDecklist): decklist is IDecklist => {
