@@ -76,7 +76,7 @@ router.post('/card/:id', authenticateJWT, async (req: Request, res: Response) =>
     {
         reqDecklist = req.body.decklist;
     }
-    if (!quantity || !partOfDeck)
+    if ((!quantity && quantity !== 0 ) || !partOfDeck)
     {
         res.status(400).json('You are missing quantity and part of deck propertyes from body');
         return;
@@ -122,25 +122,22 @@ router.post('/card/:id', authenticateJWT, async (req: Request, res: Response) =>
         }
 
         const foundCardInDecklist = await CardDecklist.findOne({ where: { cardId: foundCard.dataValues.id, decklistId: decklist.id } });
-        if (!foundCardInDecklist)
-        {
-            const newDecklist = await CardDecklist.create({
+        if (!foundCardInDecklist) {
+            const newCardInDecklist = await CardDecklist.create({
                 quantity: req.body.quantity, partOfDeck: req.body.partOfDeck, cardId: foundCard.dataValues.id,
                 decklistId: decklist.id
             });
-            res.status(201).json(newDecklist.dataValues);
+            res.status(201).json({ decklist: { ...newCardInDecklist.dataValues, name: decklist.name }, card: foundCard });
         }
-        else
-        {
-            if (foundCardInDecklist.dataValues.quantity === 3)
-            {
+        else {
+            if (foundCardInDecklist.dataValues.quantity === 3) {
                 res.status(400).json('Max 3 cards');
                 return;
             }
             await foundCardInDecklist.update({ quantity: foundCardInDecklist.dataValues.quantity + 1 },
                 { where: { cardId: foundCard.dataValues.id, decklistId: decklist.id } });
             const updatedCardInDecklist = await CardDecklist.findOne({ where: { cardId: foundCard.dataValues.id, decklistId: decklist.id } });
-            res.status(201).json(updatedCardInDecklist!.dataValues);
+            res.status(201).json({ decklist: { ...updatedCardInDecklist!.dataValues, name: decklist.name }, card: foundCard});
         }
     }
     catch (error)
