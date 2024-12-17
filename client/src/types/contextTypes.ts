@@ -35,5 +35,6 @@ export interface IDecklistContextValue{
     decklist: IDecklist | null,
     isLoading: boolean,
     fetchAllCards: (id: number) => void,
-    addCardToDecklist: (fromData: IAddCard, cardId:number) => void
+    addCardToDecklist: (fromData: IAddCard, cardId: number) => void,
+    removeCardFromDecklist: (decklistId: number, cardId: number) => void,
 }

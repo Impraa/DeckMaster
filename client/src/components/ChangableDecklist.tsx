@@ -23,6 +23,10 @@ const ChangableDecklist = () => {
         e.preventDefault();
     }
 
+    const handleDragStart = (e: React.DragEvent<HTMLImageElement>, cardId: number) => {
+        e.dataTransfer.setData("cardId", cardId.toString());
+    };
+
     const onDropHandler = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         const cardId = e.dataTransfer.getData("cardId");
@@ -67,7 +71,7 @@ const ChangableDecklist = () => {
     }
 
     return (
-        <div onDragOver={onDragOverHandler} onDrop={onDropHandler}>
+        <div onDragOver={onDragOverHandler} onDrop={onDropHandler} className="max-h-[80vh] overflow-auto">
             <div id="mainDeck" className="min-h-[50vh]"> 
                 <h2>Main deck</h2>
                 <hr/>
@@ -87,6 +91,7 @@ const ChangableDecklist = () => {
                                         draggable
                                         key={card.id+i}
                                         onMouseEnter={() => cardContext.setCardDetails(card.id)}
+                                        onDragStart={(e) => handleDragStart(e, card.id)}
                                         src={`http://localhost:8000${card.cardImage}`} className="w-16" />
                                 )
                             }

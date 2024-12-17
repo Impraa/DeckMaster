@@ -1,7 +1,7 @@
 import { IDecklistContextValue } from "@/types/contextTypes";
 import { createContext, ReactNode, useMemo, useState } from "react";
 import { IAddCard, IDecklist, isValidDecklist } from "../../../types/decklist";
-import { asyncAddCardToDecklist, fetchAllCardsAsync } from "@services/Decklist";
+import { asyncAddCardToDecklist, asyncRemoveCardFromDecklist, fetchAllCardsAsync } from "@services/Decklist";
 import { ICard, IMonsterCard } from "../../../types/card";
 
 export const DecklistContext = createContext<IDecklistContextValue | null>(null);
@@ -41,7 +41,6 @@ const DecklistProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const addCardToDecklist = async (formData: IAddCard, cardId: number) => {
         setIsLoading(true);
         const response = await asyncAddCardToDecklist(formData, cardId);
-        console.log(response);
         if (!response.error)
         {
             const { card, decklist } = response.data;
@@ -98,7 +97,53 @@ const DecklistProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         setIsLoading(false);
     }
 
-    const value = useMemo(() => ({ decklist, isLoading, fetchAllCards, addCardToDecklist }), [decklist, isLoading]);
+    const removeCardFromDecklist = async (decklistId:number, cardId: number) => {
+        setIsLoading(true);
+        const response = await asyncRemoveCardFromDecklist(decklistId, cardId);
+        if (!response.error)
+        {
+            const cardId = response.data.cardId;
+            const partOfDeck = response.data.partOfDeck;
+            console.log(response.data);
+            if (response.data.quantity)
+            {
+                setDecklist((oldValue) => {
+                    if (!oldValue) return null;
+                
+                    const updatedDeckPart = oldValue[partOfDeck as 'mainDeck' | 'extraDeck' | 'sideDeck']
+                        .map((card) => {
+                            if (card.id === cardId)
+                            {
+                                return { ...card, quantity: card.quantity! - 1 };
+                            }
+                            return card;
+                        });
+                
+                    return {
+                        ...oldValue,
+                        [partOfDeck as 'mainDeck' | 'extraDeck' | 'sideDeck']: updatedDeckPart,
+                    };
+                });
+            }
+            else
+            {
+                setDecklist((oldValue) => {
+                    if (!oldValue) return null;
+                
+                    const updatedDeckPart = oldValue[partOfDeck as 'mainDeck' | 'extraDeck' | 'sideDeck']
+                        .filter((card) => card.id !== cardId);
+                
+                    return {
+                        ...oldValue,
+                        [partOfDeck as 'mainDeck' | 'extraDeck' | 'sideDeck']: updatedDeckPart,
+                    };
+                });
+            }
+        }
+        setIsLoading(false);
+    }
+
+    const value = useMemo(() => ({ decklist, isLoading, fetchAllCards, addCardToDecklist, removeCardFromDecklist }), [decklist, isLoading]);
     return <DecklistContext.Provider value={value}>{children}</DecklistContext.Provider>
 }
 

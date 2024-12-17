@@ -3,10 +3,12 @@ import useCallContext from "@hooks/useCallContext";
 import { useEffect, useRef, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { ModalContext } from "@context/ModalContext";
+import { DecklistContext } from "@context/DecklistContext";
 
 const CardPool = () => {
     const cardContext = useCallContext(CardContext);
     const modalContext = useCallContext(ModalContext);
+    const deckContext = useCallContext(DecklistContext);
     const [offset, setOffset] = useState<number>(0);
     const [searchQuery, setSearchQuery] = useState<string>('');
     const navigate = useNavigate();
@@ -51,8 +53,19 @@ const CardPool = () => {
         modalContext.setIsVisible(true);
     }
 
+    const onDragOverHandler = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+    }
+
+    const onDropHandler = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        const cardId = e.dataTransfer.getData("cardId");
+        if (deckContext && deckContext.decklist) deckContext.removeCardFromDecklist(deckContext.decklist.id, +cardId);
+        else console.log('Failed to remove card');
+    }
+
     return (
-        <div className="flex flex-col">
+        <div onDrop={onDropHandler} onDragOver={onDragOverHandler}  className="flex flex-col">
             <input placeholder="Search..." onChange={onChange} />
             <div className="grid grid-cols-4 gap-4 max-h-[85vh] overflow-auto" onScroll={handleScroll} ref={containerRef}>
                 {
