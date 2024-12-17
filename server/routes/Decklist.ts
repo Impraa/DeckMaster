@@ -188,7 +188,7 @@ router.delete('/:decklistId/card/:cardId', authenticateJWT, async (req: Request,
         else
         {
             await foundCardInDecklist.destroy();
-            res.status(200).json('Card has been deleted');
+            res.status(200).json({partOfDeck: foundCardInDecklist.dataValues.partOfDeck, cardId: foundCardInDecklist.dataValues.cardId});
         }
     }
     catch (error)
