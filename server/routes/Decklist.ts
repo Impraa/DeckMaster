@@ -27,6 +27,33 @@ router.post('/new', async (req: Request, res: Response) => {
     }
 })
 
+router.get('/all', async (req: Request, res: Response) => {
+    try
+    {
+        const allDecklists = await sequelize.query(
+            `SELECT ud.*, u.email, u.username, d.name
+             FROM user_decklist ud
+             JOIN users u ON u.id = ud.userId
+             JOIN decklists d ON d.id = ud.decklistId;`,
+            {
+                type: QueryTypes.SELECT
+            }
+        );
+
+        if (allDecklists.length < 1)
+        {
+                res.status(404).json('There are no decklists');
+                return;
+        }
+
+        res.status(200).json({ decklists: allDecklists });
+    }
+    catch (error)
+    {
+        res.status(500).json('Database error - ' + error);    
+    }
+})
+
 router.get("/allCards/:id", async (req: Request, res: Response) => {
     const { id } = req.params;
     if (!id)
