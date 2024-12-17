@@ -25,7 +25,7 @@ function Router() {
         <Route path="/card/:id?" element={<Card/>} />
         <Route path="/manage-cards" element={<ManageCards/>} />
         <Route path="/decklist/:id" element={<SingleDecklist/>} />
-        <Route path="/decklists/:query" element={<Decklists/>} />
+        <Route path="/decklists/:query?" element={<Decklists/>} />
         <Route path="/edit-profile/:id" element={<EditProfile />} />
         <Route path="/profile/:id" element={<Profile/>} />
       </Routes>

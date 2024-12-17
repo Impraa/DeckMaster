@@ -11,6 +11,7 @@ const Navbar = () => {
                 <Link URL="/">Home</Link>
             </div>
             <div className="space-x-4 flex justify-between">
+                <Link URL="/decklists">All decklists</Link>
                 {
                     userContext && userContext.user ? 
                         (

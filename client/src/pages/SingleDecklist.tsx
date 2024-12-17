@@ -1,8 +1,8 @@
+import ChangableDecklist from "@components/ChangableDecklist"
+
 const SingleDecklist = () => {
     return (
-        <div>
-            Single Decklist
-        </div>
+        <ChangableDecklist />
     )
 }
 

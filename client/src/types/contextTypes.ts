@@ -33,8 +33,10 @@ export interface IModalContextValue{
 
 export interface IDecklistContextValue{
     decklist: IDecklist | null,
+    decklists: IDecklist[],
     isLoading: boolean,
     fetchAllCards: (id: number) => void,
+    fetchAllDecklists: () => void,
     addCardToDecklist: (fromData: IAddCard, cardId: number) => void,
     removeCardFromDecklist: (decklistId: number, cardId: number) => void,
 }

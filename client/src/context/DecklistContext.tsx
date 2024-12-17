@@ -1,18 +1,19 @@
 import { IDecklistContextValue } from "@/types/contextTypes";
 import { createContext, ReactNode, useMemo, useState } from "react";
 import { IAddCard, IDecklist, isValidDecklist } from "../../../types/decklist";
-import { asyncAddCardToDecklist, asyncRemoveCardFromDecklist, fetchAllCardsAsync } from "@services/Decklist";
+import { asyncAddCardToDecklist, asyncRemoveCardFromDecklist, asyncFetchAllCards, asyncFetchAllDecklists } from "@services/Decklist";
 import { ICard, IMonsterCard } from "../../../types/card";
 
 export const DecklistContext = createContext<IDecklistContextValue | null>(null);
 
 const DecklistProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [decklist, setDecklist] = useState<IDecklist | null>(null);
+    const [decklists, setDecklists] = useState<IDecklist[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const fetchAllCards = async (id:number) => {
         setIsLoading(true);
-        const response = await fetchAllCardsAsync(id);
+        const response = await asyncFetchAllCards(id);
         if (!response.error)
         {
             const processedDecklist: IDecklist = {
@@ -34,6 +35,16 @@ const DecklistProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
             }
             
             setDecklist(processedDecklist);
+        }
+        setIsLoading(false);
+    }
+
+    const fetchAllDecklists = async () => {
+        setIsLoading(true);
+        const response = await asyncFetchAllDecklists();
+        if (!response.error)
+        {
+            setDecklists(response.data.decklists)
         }
         setIsLoading(false);
     }
@@ -143,7 +154,10 @@ const DecklistProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         setIsLoading(false);
     }
 
-    const value = useMemo(() => ({ decklist, isLoading, fetchAllCards, addCardToDecklist, removeCardFromDecklist }), [decklist, isLoading]);
+    const value = useMemo(() => ({
+        decklist, decklists, isLoading, fetchAllDecklists,
+        fetchAllCards, addCardToDecklist, removeCardFromDecklist
+    }), [decklist, decklists, isLoading]);
     return <DecklistContext.Provider value={value}>{children}</DecklistContext.Provider>
 }
 
