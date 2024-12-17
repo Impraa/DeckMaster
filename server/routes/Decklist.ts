@@ -31,9 +31,8 @@ router.get('/all', async (req: Request, res: Response) => {
     try
     {
         const allDecklists = await sequelize.query(
-            `SELECT ud.*, u.email, u.username, d.name
+            `SELECT d.*
              FROM user_decklist ud
-             JOIN users u ON u.id = ud.userId
              JOIN decklists d ON d.id = ud.decklistId;`,
             {
                 type: QueryTypes.SELECT
