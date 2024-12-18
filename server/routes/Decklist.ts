@@ -53,6 +53,42 @@ router.get('/all', async (req: Request, res: Response) => {
     }
 })
 
+router.get('/all/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
+    
+    if (!id)
+    {
+        res.status(400).json("User id is not included");
+        return;
+    }
+    
+    try
+    {
+        const allDecklists = await sequelize.query(
+            `SELECT d.*
+             FROM user_decklist ud
+             JOIN decklists d ON d.id = ud.decklistId
+             WHERE ud.userId = :userId;`,
+            {
+                replacements: { userId: id },
+                type: QueryTypes.SELECT
+            }
+        );
+
+        if (allDecklists.length < 1)
+        {
+                res.status(404).json('There are no decklists');
+                return;
+        }
+
+        res.status(200).json({ decklists: allDecklists });
+    }
+    catch (error)
+    {
+        res.status(500).json('Database error - ' + error);    
+    }
+})
+
 router.get("/allCards/:id", async (req: Request, res: Response) => {
     const { id } = req.params;
     if (!id)
