@@ -6,7 +6,7 @@ import useCallContext from "@hooks/useCallContext";
 import { useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const CreateDecklist = () => {
+const ManageDecklist = () => {
     const userContext = useCallContext(UserContext);
     const navigate = useNavigate();
 
@@ -23,4 +23,4 @@ const CreateDecklist = () => {
     )
 }
 
-export default CreateDecklist;
+export default ManageDecklist;

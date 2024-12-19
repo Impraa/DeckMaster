@@ -7,7 +7,7 @@ const Login = lazy(() => import("@pages/Login"));
 const Register = lazy(() => import('@pages/Register'));
 const EditProfile = lazy(() => import("@pages/EditProfile"));
 const Profile = lazy(() => import('@pages/Profile'));
-const CreateDecklist = lazy(() => import('@pages/CreateDecklist'));
+const ManageDecklist = lazy(() => import('@pages/ManageDecklist'));
 const Decklists = lazy(() => import('@pages/Decklists'));
 const SingleDecklist = lazy(() => import('@pages/SingleDecklist'));
 const Card = lazy(() => import('@pages/Card'));
@@ -19,9 +19,9 @@ function Router() {
       <Navbar/>
       <Routes>
         <Route index element={<Home/>}/> 
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/create-decklist/:id?" element={<CreateDecklist/>} />
+        <Route path="/login" element={<Login/>} />
+        <Route path="/register" element={<Register/>} />
+        <Route path="/create-decklist/:id?" element={<ManageDecklist/>} />
         <Route path="/card/:id?" element={<Card/>} />
         <Route path="/manage-cards" element={<ManageCards/>} />
         <Route path="/decklist/:id" element={<SingleDecklist/>} />

@@ -1,7 +1,7 @@
 import { IDecklistContextValue } from "@/types/contextTypes";
 import { createContext, ReactNode, useMemo, useState } from "react";
 import { IAddCard, IDecklist, isValidDecklist } from "../../../types/decklist";
-import { asyncAddCardToDecklist, asyncRemoveCardFromDecklist, asyncFetchAllCards, asyncFetchAllDecklists } from "@services/Decklist";
+import { asyncAddCardToDecklist, asyncRemoveCardFromDecklist, asyncFetchAllCards, asyncFetchAllDecklists, asyncFetchAllUserDecklists } from "@services/Decklist";
 import { ICard, IMonsterCard } from "../../../types/card";
 
 export const DecklistContext = createContext<IDecklistContextValue | null>(null);
@@ -37,6 +37,15 @@ const DecklistProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
             setDecklist(processedDecklist);
         }
         setIsLoading(false);
+    }
+
+    const fetchAllUserDecklists = async (userId: number) => {
+        setIsLoading(true);
+        const response = await asyncFetchAllUserDecklists(userId);
+        if (!response.error)
+        {
+            setDecklists(response.data.decklists);
+        }
     }
 
     const fetchAllDecklists = async () => {
@@ -155,7 +164,7 @@ const DecklistProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     }
 
     const value = useMemo(() => ({
-        decklist, decklists, isLoading, fetchAllDecklists,
+        decklist, decklists, isLoading, fetchAllUserDecklists, fetchAllDecklists,
         fetchAllCards, addCardToDecklist, removeCardFromDecklist
     }), [decklist, decklists, isLoading]);
     return <DecklistContext.Provider value={value}>{children}</DecklistContext.Provider>
