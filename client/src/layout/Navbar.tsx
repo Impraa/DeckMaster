@@ -17,7 +17,7 @@ const Navbar = () => {
                         (
                             <>
                                 {userContext.user.role === 'ADMIN' && <Link URL="/manage-cards">Manage Cards</Link>}
-                                <Link URL="/create-decklist">Create Decklist</Link>
+                                <Link URL="/manage-decklist">Manage Decklist</Link>
                                 <div className="flex space-x-4">
                                     <p>Hello, <Link URL={`/profile/${userContext.user.id}`} >{userContext.user.username}</Link></p>
                                     <button onClick={() => {userContext.logoutUser()}}>Logout</button>
