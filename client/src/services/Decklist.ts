@@ -65,8 +65,8 @@ export const asyncAddCardToDecklist = (formData: IAddCard, cardId: number) => {
   .catch((e) => ({ error: true, data: e}));
 }
 
-export const asyncRemoveCardFromDecklist = (decklistId: number, cardId: number) => {
-  return fetch(`http://localhost:8000/decklist/${decklistId}/card/${cardId}`, {
+export const asyncRemoveCardFromDecklist = (decklistId: number, cardId: number, partOfDeck: 'mainDeck' | 'sideDeck' | 'extraDeck') => {
+  return fetch(`http://localhost:8000/decklist/${decklistId}/${partOfDeck}/card/${cardId}`, {
     method: 'DELETE',
     credentials: 'include'
   })

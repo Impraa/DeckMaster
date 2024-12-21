@@ -24,7 +24,36 @@ const ChangableDecklist = () => {
     }
 
     const handleDragStart = (e: React.DragEvent<HTMLImageElement>, cardId: number) => {
+        const target = e.target as HTMLElement;
+        const parentElement = target.closest('.cardPool');
+        let parentContainer: string | null = null;
+        if (parentElement)
+        {
+            parentContainer = 'cardPool';
+        }
+        else
+        {
+            const deckElement = target.closest('.mainDeck, .extraDeck, .sideDeck');
+            if (deckElement)
+            {
+                switch (true)
+                {
+                    case deckElement.classList.contains('mainDeck'):
+                        parentContainer = 'mainDeck';
+                        break;
+                    case deckElement.classList.contains('extraDeck'):
+                        parentContainer = 'extraDeck';
+                        break;
+                    case deckElement.classList.contains('sideDeck'):
+                        parentContainer = 'sideDeck';
+                        break;
+                    default:
+                        parentContainer = null;
+                }
+            }
+        }
         e.dataTransfer.setData("cardId", cardId.toString());
+        e.dataTransfer.setData("parentContainer", parentContainer ?? 'none');
     };
 
     const onDropHandler = (e: React.DragEvent<HTMLDivElement>) => {

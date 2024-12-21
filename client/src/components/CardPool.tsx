@@ -60,14 +60,15 @@ const CardPool = () => {
     const onDropHandler = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         const cardId = e.dataTransfer.getData("cardId");
-        if (deckContext && deckContext.decklist) deckContext.removeCardFromDecklist(deckContext.decklist.id, +cardId);
+        const parentContainer = e.dataTransfer.getData("parentContainer") as 'mainDeck' | 'sideDeck' | 'extraDeck';
+        if (deckContext && deckContext.decklist) deckContext.removeCardFromDecklist(deckContext.decklist.id, +cardId, parentContainer);
         else console.log('Failed to remove card');
     }
 
     return (
-        <div onDrop={onDropHandler} onDragOver={onDragOverHandler}  className="flex flex-col">
+        <div onDrop={onDropHandler} onDragOver={onDragOverHandler}  className="cardPool flex flex-col">
             <input placeholder="Search..." onChange={onChange} />
-            <div className="grid grid-cols-4 gap-4 max-h-[85vh] overflow-auto" onScroll={handleScroll} ref={containerRef}>
+            <div className="cardPool grid grid-cols-4 gap-4 max-h-[85vh] overflow-auto" onScroll={handleScroll} ref={containerRef}>
                 {
                     cardContext.cards.length > 0 ? cardContext.cards.map((card) => {
                         return (

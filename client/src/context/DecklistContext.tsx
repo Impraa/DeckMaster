@@ -117,9 +117,9 @@ const DecklistProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         setIsLoading(false);
     }
 
-    const removeCardFromDecklist = async (decklistId:number, cardId: number) => {
+    const removeCardFromDecklist = async (decklistId:number, cardId: number, partOfDeck: 'mainDeck' | 'sideDeck' | 'extraDeck') => {
         setIsLoading(true);
-        const response = await asyncRemoveCardFromDecklist(decklistId, cardId);
+        const response = await asyncRemoveCardFromDecklist(decklistId, cardId, partOfDeck);
         if (!response.error)
         {
             const cardId = response.data.cardId;
