@@ -238,11 +238,11 @@ router.post('/card/:id', authenticateJWT, async (req: Request, res: Response) =>
     }
 })
 
-router.delete('/:decklistId/card/:cardId', authenticateJWT, async (req: Request, res: Response) => {
-    const { decklistId, cardId } = req.params;
-    if (!decklistId || !cardId)
+router.delete('/:decklistId/:partOfDeck/card/:cardId', authenticateJWT, async (req: Request, res: Response) => {
+    const { decklistId, cardId, partOfDeck } = req.params;
+    if (!decklistId || !cardId || !partOfDeck)
     {
-        res.status(400).json('Decklist Id and Card Id must be included');
+        res.status(400).json('Decklist Id, Card Id and partOfDeck must be included');
         return;
     }
 
@@ -252,7 +252,7 @@ router.delete('/:decklistId/card/:cardId', authenticateJWT, async (req: Request,
             `SELECT ud.decklistId
                 FROM user_decklist ud
                 JOIN users u ON u.id = ud.userId
-                WHERE (u.role LIKE :userRole OR ud.userId = 2) AND ud.decklistId = 8;`,
+                WHERE (u.role LIKE :userRole OR ud.userId = :userId) AND ud.decklistId = :decklistId ;`,
             {
                 replacements: { decklistId: decklistId, userId: req.body.user.id, userRole: req.body.user.role },
                 type: QueryTypes.SELECT
@@ -265,7 +265,7 @@ router.delete('/:decklistId/card/:cardId', authenticateJWT, async (req: Request,
             return;
         }
 
-        const foundCardInDecklist = await CardDecklist.findOne({ where: { cardId: cardId, decklistId: decklistId } });
+        const foundCardInDecklist = await CardDecklist.findOne({ where: { cardId: cardId, decklistId: decklistId, partOfDeck: partOfDeck } });
         if (!foundCardInDecklist)
         {
             res.status(404).json('Card is not in the decklist');
