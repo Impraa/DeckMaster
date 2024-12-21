@@ -25,7 +25,6 @@ const CardDecklist = sequelize.define("card_decklist", {
     cardId: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        unique: false,
         references: {
           model: Card,
           key: "id",
@@ -34,7 +33,6 @@ const CardDecklist = sequelize.define("card_decklist", {
       decklistId: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        unique: false,
         references: {
           model: Decklist,
           key: "id",
@@ -42,6 +40,11 @@ const CardDecklist = sequelize.define("card_decklist", {
       },
 }, {
     tableName: "card_decklist", 
+    indexes: [
+        {
+          fields: ["cardId", "decklistId"],
+        },
+      ],
 });
 
 Card.belongsToMany(Decklist, { through: CardDecklist, foreignKey: "cardId", as: "decklist" });

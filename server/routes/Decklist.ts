@@ -134,6 +134,7 @@ router.post('/card/:id', authenticateJWT, async (req: Request, res: Response) =>
     let reqDecklist: null | IDecklist = null;
     const { quantity, partOfDeck } = req.body;
     const { id } = req.params;  
+    console.log(partOfDeck);
     if (req.body.decklist)
     {
         reqDecklist = req.body.decklist;
@@ -183,8 +184,16 @@ router.post('/card/:id', authenticateJWT, async (req: Request, res: Response) =>
             return;
         }
 
-        const foundCardInDecklist = await CardDecklist.findOne({ where: { cardId: foundCard.dataValues.id, decklistId: decklist.id } });
-        if (!foundCardInDecklist) {
+        const foundCardsInDecklist = (await sequelize.query(
+            `SELECT cd.cardId, cd.quantity, cd.partOfDeck
+                FROM card_decklist cd 
+                WHERE cd.cardId = :cardId AND cd.decklistId = :decklistId;`,
+            {
+                replacements: { cardId: foundCard.dataValues.id, decklistId: decklist.id },
+                type: QueryTypes.SELECT
+            }
+        )) as { quantity: number, cardId: number, partOfDeck: string }[];
+        if (foundCardsInDecklist.length < 1) {
             const newCardInDecklist = await CardDecklist.create({
                 quantity: req.body.quantity, partOfDeck: req.body.partOfDeck, cardId: foundCard.dataValues.id,
                 decklistId: decklist.id
@@ -192,14 +201,35 @@ router.post('/card/:id', authenticateJWT, async (req: Request, res: Response) =>
             res.status(201).json({ decklist: { ...newCardInDecklist.dataValues, name: decklist.name }, card: foundCard });
         }
         else {
-            if (foundCardInDecklist.dataValues.quantity === 3) {
+            const totalQuantity = foundCardsInDecklist.reduce((sum, current) => sum + current.quantity, 0);
+            if (totalQuantity === 3)
+            {
                 res.status(400).json('Max 3 cards');
                 return;
             }
-            await foundCardInDecklist.update({ quantity: foundCardInDecklist.dataValues.quantity + 1 },
-                { where: { cardId: foundCard.dataValues.id, decklistId: decklist.id } });
-            const updatedCardInDecklist = await CardDecklist.findOne({ where: { cardId: foundCard.dataValues.id, decklistId: decklist.id } });
-            res.status(201).json({ decklist: { ...updatedCardInDecklist!.dataValues, name: decklist.name }, card: foundCard});
+
+            let wasCardFound = false;
+            for (const cardInDeck of foundCardsInDecklist)
+            {
+                if (cardInDeck.partOfDeck.includes(partOfDeck))
+                {
+                        await CardDecklist.update({ quantity: +cardInDeck.quantity + 1 },
+                            { where: { cardId: foundCard.dataValues.id, decklistId: decklist.id, partOfDeck: partOfDeck } });
+                        const updatedCardInDecklist = await CardDecklist.findOne({ where: { cardId: foundCard.dataValues.id, decklistId: decklist.id, partOfDeck: partOfDeck } });
+                        wasCardFound = true;
+                        res.status(200).json({ decklist: { ...updatedCardInDecklist!.dataValues, name: decklist.name }, card: foundCard });
+                        return;
+                }
+            }
+
+            if(!wasCardFound)
+            {
+                const newCardInDecklist = await CardDecklist.create({
+                    quantity: 1, partOfDeck: req.body.partOfDeck, cardId: foundCard.dataValues.id,
+                    decklistId: decklist.id
+                });
+                res.status(201).json({ decklist: { ...newCardInDecklist.dataValues, name: decklist.name }, card: foundCard });
+            }
         }
     }
     catch (error)
