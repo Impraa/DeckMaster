@@ -30,14 +30,18 @@ const ChangableDecklist = () => {
     const onDropHandler = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         const cardId = e.dataTransfer.getData("cardId");
-        const targetId = (e.target as HTMLElement).id as 'mainDeck' | 'extraDeck' | 'sideDeck';
-        console.log(targetId);
-        if (cardId) 
+
+        const target = e.target as HTMLElement;
+        const deckTypes = ['mainDeck', 'extraDeck', 'sideDeck'];
+        const targetType = deckTypes.find(type => target.classList.contains(type));
+        console.log(targetType)
+
+        if (cardId && targetType && deckTypes.includes(targetType)) 
         {
             if (deckContext.decklist && cardContext.card)
             {
                 const extraDeckTypes = ['xyz', 'fusion', 'synchro', 'link'];
-                if (targetId === 'extraDeck' &&
+                if (targetType === 'extraDeck' &&
                     !extraDeckTypes.some((value) => cardContext.card!.humanReadableCardType.toLocaleLowerCase().includes(value)))
                 {
                     console.log('Sori bed lak');
@@ -62,9 +66,9 @@ const ChangableDecklist = () => {
                 const addCardObj: IAddCard = {
                     decklist: deckContext.decklist,
                     quantity: isCardFound ? cardCurrentQuantity : 1,
-                    partOfDeck: targetId
+                    partOfDeck: targetType as 'mainDeck' | 'sideDeck' | 'extraDeck'
                 }
-
+                console.log(addCardObj.partOfDeck);
                 deckContext.addCardToDecklist(addCardObj, +cardId);
             }
         }
@@ -72,14 +76,34 @@ const ChangableDecklist = () => {
 
     return (
         <div onDragOver={onDragOverHandler} onDrop={onDropHandler} className="max-h-[80vh] overflow-auto">
-            <div id="mainDeck" className="min-h-[50vh]"> 
+            <div className="mainDeck min-h-[50vh]"> 
                 <h2>Main deck</h2>
-                <hr/>
+                <hr />
+                <div  className="mainDeck flex flex-row flex-wrap min-h-full">
+                    {deckContext.decklist && deckContext.decklist.mainDeck.map((card) => {
+                        if (card.quantity)
+                        {
+                            const cards = [];
+                            for (let i = 0; i < card.quantity; i++)
+                            {
+                                cards.push(
+                                    <img
+                                        draggable
+                                        key={card.id+i}
+                                        onMouseEnter={() => cardContext.setCardDetails(card.id)}
+                                        onDragStart={(e) => handleDragStart(e, card.id)}
+                                        src={`http://localhost:8000${card.cardImage}`} className="w-16" />
+                                )
+                            }
+                            return cards;
+                        }    
+                    })}
+                </div>
             </div>
-            <div  className="min-h-[15vh]"> 
+            <div  className="extraDeck min-h-[15vh]"> 
                 <h2>Extra deck</h2>
                 <hr />
-                <div id="extraDeck"  className="flex flex-row flex-wrap">
+                <div  className="extraDeck flex flex-row flex-wrap">
                     {deckContext.decklist && deckContext.decklist.extraDeck.map((card) => {
                         if (card.quantity)
                         {
@@ -100,9 +124,29 @@ const ChangableDecklist = () => {
                     })}
                 </div>
             </div>
-            <div id="sideDeck" className="min-h-[15vh]"> 
+            <div className="sideDeck min-h-[15vh]"> 
                 <h2>Side deck</h2>
-                <hr/>
+                <hr />
+                <div  className="sideDeck flex flex-row flex-wrap">
+                    {deckContext.decklist && deckContext.decklist.sideDeck.map((card) => {
+                        if (card.quantity)
+                        {
+                            const cards = [];
+                            for (let i = 0; i < card.quantity; i++)
+                            {
+                                cards.push(
+                                    <img
+                                        draggable
+                                        key={card.id+i}
+                                        onMouseEnter={() => cardContext.setCardDetails(card.id)}
+                                        onDragStart={(e) => handleDragStart(e, card.id)}
+                                        src={`http://localhost:8000${card.cardImage}`} className="w-16" />
+                                )
+                            }
+                            return cards;
+                        }    
+                    })}
+                </div>
             </div>
         </div>)
 }
