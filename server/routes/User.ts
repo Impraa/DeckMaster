@@ -9,6 +9,7 @@ import User from '../models/User';
 import Jwt from "jsonwebtoken";
 import { Model } from 'sequelize';
 import { authenticateJWT } from '../utils/middelware';
+import UserDecklist from '../models/UserDecklist';
 
 const router = express.Router();
 
@@ -76,6 +77,25 @@ router.post('/refresh', authenticateJWT, (req: Request, res: Response) => {
 
 router.delete('/logout', authenticateJWT, async (req: Request, res: Response) => {
     res.clearCookie('USER_TOKEN').status(200).json('User has been logged out');
+})
+
+router.get('/:userId/deck/:deckId', async (req: Request, res: Response) => {
+    const { userId, deckId } = req.params;
+    if (!userId || !deckId)
+    {
+        res.status(400).json('Ids have not been provided');
+        return;
+    }
+
+    try
+    {
+        const userDecklist = (await UserDecklist.findOne({ where: { userId: userId, decklistId: deckId } })) as Model<IUser>;
+        
+        res.status(200).json(userDecklist.dataValues);
+    }
+    catch (error) {
+        res.status(400).json('Deck is nonexistant, please try again.');
+    }
 })
 
 router.get('/:id', async (req: Request, res: Response) => {
