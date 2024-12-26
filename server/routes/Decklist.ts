@@ -7,7 +7,7 @@ import { IDecklist, isValidDecklist } from '../../types/decklist';
 import Decklist from '../models/Decklist';
 import Card from '../models/Card';
 import CardDecklist from '../models/CardDecklist';
-import { QueryTypes } from 'sequelize';
+import { QueryTypes, where } from 'sequelize';
 import { authenticateJWT } from '../utils/middelware';
 import UserDecklist from '../models/UserDecklist';
 import { sequelize } from '../utils/database';
@@ -161,7 +161,7 @@ router.post('/card/:id', authenticateJWT, async (req: Request, res: Response) =>
         }
 
         let decklist:null | IDecklist = null;
-        if (reqDecklist && isValidDecklist(reqDecklist))
+        if (reqDecklist && isValidDecklist(reqDecklist) && reqDecklist.id !== 0)
         {   
             const foundDecklist = await Decklist.findOne({ where: { id: reqDecklist.id } })
             if (!foundDecklist)
@@ -169,11 +169,20 @@ router.post('/card/:id', authenticateJWT, async (req: Request, res: Response) =>
                 res.status(404).json('Decklist could not be found')
                 return;
             }
-            decklist = foundDecklist.dataValues;
+            if (foundDecklist.dataValues.name !== reqDecklist.name)
+            {
+                await foundDecklist.update({ name: reqDecklist.name }, { where: { id: reqDecklist.id } });
+                const updatedDecklist = await Decklist.findOne({ where: { id: reqDecklist.id } });
+                decklist = updatedDecklist!.dataValues;
+            }
+            else
+            {
+                decklist = foundDecklist.dataValues;
+            }
         }
         else
         {
-            const newDecklist = await Decklist.create({ name: 'My decklist' });
+            const newDecklist = await Decklist.create({ name: reqDecklist ? reqDecklist.name : 'My decklist' });
             await UserDecklist.create({ userId: req.body.user.id, decklistId: newDecklist.dataValues.id });
             decklist = newDecklist.dataValues;
         }
