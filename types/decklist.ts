@@ -9,7 +9,7 @@ export interface IDecklist {
 }
 
 export interface IAddCard {
-    decklist?: IDecklist,
+    decklist: IDecklist | null,
     quantity: number,
     partOfDeck: 'extraDeck' | 'mainDeck' | 'sideDeck'
 }

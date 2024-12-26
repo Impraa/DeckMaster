@@ -163,8 +163,32 @@ const DecklistProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         setIsLoading(false);
     }
 
+    const changeDeckName = (newName: string) => {
+        setDecklist((oldValue) => {
+            if (!oldValue)
+            {
+                return {
+                    id: 0,
+                    name: newName,
+                    mainDeck: [],
+                    extraDeck: [],
+                    sideDeck: [],
+                };
+            }
+    
+            return {
+                ...oldValue,
+                name: newName,
+            };
+        });
+    }
+
+    const clearDecklist = () => {
+        setDecklist(null);
+    }
+
     const value = useMemo(() => ({
-        decklist, decklists, isLoading, fetchAllUserDecklists, fetchAllDecklists,
+        decklist, decklists, isLoading, changeDeckName, fetchAllUserDecklists, fetchAllDecklists, clearDecklist,
         fetchAllCards, addCardToDecklist, removeCardFromDecklist
     }), [decklist, decklists, isLoading]);
     return <DecklistContext.Provider value={value}>{children}</DecklistContext.Provider>

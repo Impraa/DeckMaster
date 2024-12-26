@@ -63,11 +63,10 @@ const ChangableDecklist = () => {
         const target = e.target as HTMLElement;
         const deckTypes = ['mainDeck', 'extraDeck', 'sideDeck'];
         const targetType = deckTypes.find(type => target.classList.contains(type));
-        console.log(targetType)
 
         if (cardId && targetType && deckTypes.includes(targetType)) 
         {
-            if (deckContext.decklist && cardContext.card)
+            if (cardContext.card)
             {
                 const extraDeckTypes = ['xyz', 'fusion', 'synchro', 'link'];
                 if (targetType === 'extraDeck' &&
@@ -78,8 +77,10 @@ const ChangableDecklist = () => {
                 }
 
                 let cardCurrentQuantity = 0;
-
-                const isCardFound = (['mainDeck', 'extraDeck', 'sideDeck'] as ('mainDeck' | 'sideDeck' | 'extraDeck')[]).some((deckType) => {
+                let isCardFound = null;
+                if (deckContext.decklist)
+                {
+                    isCardFound = (['mainDeck', 'extraDeck', 'sideDeck'] as ('mainDeck' | 'sideDeck' | 'extraDeck')[]).some((deckType) => {
                     const card = deckContext.decklist![deckType].find((card) => card.id === +cardId);
                     if (card)
                     {
@@ -104,6 +105,9 @@ const ChangableDecklist = () => {
     }
 
     return (
+        <div>
+            <input type="text" value={deckContext.decklist && deckContext.decklist.name ? deckContext.decklist.name : ''}
+                onChange={(e) => deckContext.changeDeckName(e.currentTarget.value)} />
         <div onDragOver={onDragOverHandler} onDrop={onDropHandler} className="max-h-[80vh] overflow-auto">
             <div className="mainDeck min-h-[50vh]"> 
                 <h2>Main deck</h2>
@@ -175,6 +179,7 @@ const ChangableDecklist = () => {
                             return cards;
                         }    
                     })}
+                </div>
                 </div>
             </div>
         </div>)
