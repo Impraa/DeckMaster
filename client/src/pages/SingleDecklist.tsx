@@ -2,21 +2,28 @@ import ChangableDecklist from "@components/ChangableDecklist"
 import Link from "@components/Link";
 import { UserContext } from "@context/UserContext"
 import useCallContext from "@hooks/useCallContext"
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 const SingleDecklist = () => {
     const userContext = useCallContext(UserContext);
+    const [isOwner, setIsOwner] = useState(false);
     const navigate = useNavigate();
     const { id } = useParams();
 
     useLayoutEffect(() => {
-        if(!userContext || !id) return navigate('/')
-    },[])
+        if (!userContext || !id) return navigate('/')
+    }, [])
+    
+    useLayoutEffect(() => {
+        if (userContext && id && userContext.user)
+            userContext.isUserDeckOwner(userContext.user.id, +id).then(value => setIsOwner(value))
+    }, [userContext!.user])
 
     return (
         <>
-            <Link URL={`/manage-decklist/${id}`}>Edit deck</Link>
+            {userContext && userContext.user && (userContext.user.role === 'ADMIN' || isOwner) && 
+                < Link URL={`/manage-decklist/${id}`}>Edit deck</Link >}
             <ChangableDecklist />
         </>
     )

@@ -98,3 +98,19 @@ export const updateUserAsync = (id: number, formData: IUpdateUserData) => {
     })
   .catch((e) => ({ error: true, data: e}));
 }
+
+export const isUserDeckOwnerAsync = (userId: number, deckId: number) => {
+  return fetch(`http://localhost:8000/user/${userId}/deck/${deckId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  })
+  .then(async (response) => { 
+    const data = await response.json();
+    if(!response.ok) return { error: true, data: data};
+    else return { error: false, data: data};
+    })
+  .catch((e) => ({ error: true, data: e}));
+}

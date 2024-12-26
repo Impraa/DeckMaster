@@ -1,7 +1,7 @@
 import { IUserContextValue } from "@/types/contextTypes";
 import React, { createContext, useLayoutEffect, useState } from "react";
 import { isValidUser, IUpdateUserData, IUser, LoginUser } from "../../../types/user";
-import { loginUserAsync, logoutUserAsync, refreshUserAsync, registerUserAsync, updateUserAsync } from "@services/User";
+import { isUserDeckOwnerAsync, loginUserAsync, logoutUserAsync, refreshUserAsync, registerUserAsync, updateUserAsync } from "@services/User";
 
 export const UserContext = createContext<IUserContextValue | null>(null);
 
@@ -82,7 +82,22 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     setIsLoading(false)
   }
 
-  const value = React.useMemo( () => ({ user, isLoading, error, logoutUser, updateUser, loginUser, registerUser }), [user, isLoading, error] );
+  const isUserDeckOwner = async (userId: number, deckId: number) => {
+    setIsLoading(true);
+    const response = await isUserDeckOwnerAsync(userId, deckId);
+    if (!response.error)
+    {
+      setIsLoading(false);
+      return true;
+    }
+    setIsLoading(false);
+    return false;
+  }
+
+  const value = React.useMemo(() => ({
+    user, isLoading, error,
+    logoutUser, updateUser, loginUser, registerUser, isUserDeckOwner
+  }), [user, isLoading, error]);
 
   return <UserContext.Provider value={value}> {children} </UserContext.Provider>;
 };
