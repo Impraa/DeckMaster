@@ -75,6 +75,12 @@ const ChangableDecklist = () => {
                     console.log('Sori bed lak');
                     return;
                 }
+                if(targetType === 'mainDeck' &&
+                    extraDeckTypes.some((value) => cardContext.card!.humanReadableCardType.toLocaleLowerCase().includes(value)))
+                {
+                    console.log('Dices kume');
+                    return;
+                }
 
                 let cardCurrentQuantity = 0;
                 let isCardFound = null;
@@ -92,6 +98,7 @@ const ChangableDecklist = () => {
                         return false;
                     }
                 });
+                }
 
                 const addCardObj: IAddCard = {
                     decklist: deckContext.decklist,
