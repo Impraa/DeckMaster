@@ -7,7 +7,7 @@ const Decklists = () => {
     const deckContext = useCallContext(DecklistContext);
 
     useLayoutEffect(() => {
-        if (deckContext && deckContext.decklists.length < 1) deckContext.fetchAllDecklists();
+        if (deckContext) deckContext.fetchAllDecklists();
     }, [deckContext])
 
     return (
