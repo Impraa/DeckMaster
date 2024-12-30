@@ -247,6 +247,56 @@ router.post('/card/:id', authenticateJWT, async (req: Request, res: Response) =>
     }
 })
 
+router.delete('/:decklistId', authenticateJWT, async (req: Request, res: Response) => {
+    const { user } = req.body;
+    const { decklistId } = req.params;
+    if (!decklistId)
+    {
+        res.status(400).json('Decklist id is mandatory');
+        return;
+    }
+    try
+    {
+        const isUserPremitted = await sequelize.query(
+            `SELECT ud.decklistId
+                FROM user_decklist ud
+                JOIN users u ON u.id = ud.userId
+                WHERE (u.role LIKE :userRole OR ud.userId = :userId) AND ud.decklistId = :decklistId ;`,
+            {
+                replacements: { decklistId: decklistId, userId: user.id, userRole: user.role },
+                type: QueryTypes.SELECT
+            }
+        );
+
+        if (isUserPremitted.length < 1)
+        {
+            res.status(403).json('You are not premitted to change this deck');
+            return;
+        }
+        
+        await sequelize.transaction(async (t) => {
+            await sequelize.query('DELETE FROM user_decklist WHERE decklistId = :decklistId', {
+              replacements: { decklistId: decklistId },
+              transaction: t,
+            });
+            await sequelize.query('DELETE FROM card_decklist WHERE decklistId = :decklistId', {
+              replacements: { decklistId: decklistId },
+              transaction: t,
+            });
+            await sequelize.query('DELETE FROM decklists WHERE id = :decklistId', {
+              replacements: { decklistId: decklistId },
+              transaction: t,
+            });
+          });
+
+        res.status(200).json('Deck was deleted');
+    }
+    catch (error)
+    {
+        res.status(500).json('Database error - '+ error);    
+    }
+})
+
 router.delete('/:decklistId/:partOfDeck/card/:cardId', authenticateJWT, async (req: Request, res: Response) => {
     const { decklistId, cardId, partOfDeck } = req.params;
     if (!decklistId || !cardId || !partOfDeck)
