@@ -3,10 +3,12 @@ import { createContext, ReactNode, useMemo, useState } from "react";
 import { IAddCard, IDecklist, isValidDecklist } from "../../../types/decklist";
 import { asyncAddCardToDecklist, asyncRemoveCardFromDecklist, asyncFetchAllCards, asyncFetchAllDecklists, asyncFetchAllUserDecklists } from "@services/Decklist";
 import { ICard, IMonsterCard } from "../../../types/card";
+import { useNavigate } from "react-router-dom";
 
 export const DecklistContext = createContext<IDecklistContextValue | null>(null);
 
 const DecklistProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const navigate = useNavigate();
     const [decklist, setDecklist] = useState<IDecklist | null>(null);
     const [decklists, setDecklists] = useState<IDecklist[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -64,7 +66,7 @@ const DecklistProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         if (!response.error)
         {
             const { card, decklist } = response.data;
-            const { quantity, partOfDeck, id, name } = decklist; 
+            const { quantity, partOfDeck, decklistId, name } = decklist; 
             const insertedCard = card;
             insertedCard.quantity = quantity;
             insertedCard.partOfDeck = partOfDeck;
@@ -72,13 +74,13 @@ const DecklistProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
             {
                 setDecklist(() => {
                     const newDecklist: IDecklist = {
-                        id: id,
+                        id: decklistId,
                         name: name,
                         mainDeck: [],
                         extraDeck: [],
                         sideDeck: [],
                     }
-
+                    console.log(newDecklist)
                     newDecklist[response.data.decklist.partOfDeck as 'mainDeck' | 'extraDeck' | 'sideDeck'].push(insertedCard);
 
                     return newDecklist;
@@ -113,6 +115,8 @@ const DecklistProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                     }
                 });
             }
+            setIsLoading(false);
+            if(window.location.href[3] !== 'manage-decklist') return navigate(`/manage-decklist/${decklistId}`)
         }
         setIsLoading(false);
     }

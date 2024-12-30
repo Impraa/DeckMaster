@@ -1,5 +1,6 @@
 import ChangableDecklist from "@components/ChangableDecklist"
 import Link from "@components/Link";
+import { DecklistContext } from "@context/DecklistContext";
 import { UserContext } from "@context/UserContext"
 import useCallContext from "@hooks/useCallContext"
 import { useLayoutEffect, useState } from "react";
@@ -7,13 +8,17 @@ import { useNavigate, useParams } from "react-router-dom";
 
 const SingleDecklist = () => {
     const userContext = useCallContext(UserContext);
+    const deckContext = useCallContext(DecklistContext);
     const [isOwner, setIsOwner] = useState(false);
     const navigate = useNavigate();
     const { id } = useParams();
 
     useLayoutEffect(() => {
         if (!userContext || !id) return navigate('/')
-    }, [])
+        return () => {
+            if (deckContext) deckContext.clearDecklist();
+        }
+    }, [id])
     
     useLayoutEffect(() => {
         if (userContext && id && userContext.user)

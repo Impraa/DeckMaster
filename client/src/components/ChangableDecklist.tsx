@@ -11,9 +11,9 @@ const ChangableDecklist = () => {
     const deckContext = useCallContext(DecklistContext);
     const cardContext = useCallContext(CardContext);
 
-    useEffect(() => { 
-        if (id && !isNaN(+id) && deckContext) deckContext.fetchAllCards(+id); 
-        if (deckContext && deckContext.decklist) console.log(deckContext.decklist);
+    useEffect(() => {
+        if (id && !isNaN(+id) && deckContext) deckContext.fetchAllCards(+id);
+        if (!id && deckContext) deckContext.clearDecklist();
     }, [id])
     
     if (!deckContext || !cardContext) return <Navigate to={'/'} />; 
