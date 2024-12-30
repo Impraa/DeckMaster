@@ -25,10 +25,17 @@ const SingleDecklist = () => {
             userContext.isUserDeckOwner(userContext.user.id, +id).then(value => setIsOwner(value))
     }, [userContext!.user])
 
+    const onClickHandler = () => {
+        if (deckContext && id) deckContext.removeDecklist(+id);
+    }
+
     return (
         <>
-            {userContext && userContext.user && (userContext.user.role === 'ADMIN' || isOwner) && 
-                < Link URL={`/manage-decklist/${id}`}>Edit deck</Link >}
+            {userContext && userContext.user && (userContext.user.role === 'ADMIN' || isOwner) &&
+                <>
+                < Link URL={`/manage-decklist/${id}`}>Edit deck</Link >
+                <button onClick={onClickHandler}>Delete deck</button>
+                </>}
             <ChangableDecklist />
         </>
     )

@@ -77,3 +77,16 @@ export const asyncRemoveCardFromDecklist = (decklistId: number, cardId: number, 
     })
   .catch((e) => ({ error: true, data: e}));
 }
+
+export const asyncRemoveDecklist = (decklistId: number) => {
+  return fetch(`http://localhost:8000/decklist/${decklistId}`, {
+    method: 'DELETE',
+    credentials: 'include'
+  })
+  .then(async (response) => { 
+    const data = await response.json();
+    if(!response.ok) return { error: true, data: data};
+    else return { error: false, data: data};
+    })
+  .catch((e) => ({ error: true, data: e}));
+}

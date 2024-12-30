@@ -43,4 +43,5 @@ export interface IDecklistContextValue{
     changeDeckName: (name: string) => void,
     clearDecklist: () => void,
     removeCardFromDecklist: (decklistId: number, cardId: number, partOfDeck: 'mainDeck' | 'sideDeck' | 'extraDeck') => void,
+    removeDecklist: (decklistId: number) => void,
 }

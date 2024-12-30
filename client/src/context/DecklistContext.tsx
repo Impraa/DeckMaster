@@ -1,7 +1,7 @@
 import { IDecklistContextValue } from "@/types/contextTypes";
 import { createContext, ReactNode, useMemo, useState } from "react";
 import { IAddCard, IDecklist, isValidDecklist } from "../../../types/decklist";
-import { asyncAddCardToDecklist, asyncRemoveCardFromDecklist, asyncFetchAllCards, asyncFetchAllDecklists, asyncFetchAllUserDecklists } from "@services/Decklist";
+import { asyncAddCardToDecklist, asyncRemoveCardFromDecklist, asyncFetchAllCards, asyncFetchAllDecklists, asyncFetchAllUserDecklists, asyncRemoveDecklist } from "@services/Decklist";
 import { ICard, IMonsterCard } from "../../../types/card";
 import { useNavigate } from "react-router-dom";
 
@@ -191,9 +191,20 @@ const DecklistProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         setDecklist(null);
     }
 
+    const removeDecklist = async (decklistId: number) => {
+        setIsLoading(true);
+        const response = await asyncRemoveDecklist(decklistId);
+        if (!response.error)
+        {
+            setDecklists(decklists.filter((decklist) => decklist.id !== decklistId));
+            return navigate('/decklists');
+        }
+        setIsLoading(false);
+    }
+
     const value = useMemo(() => ({
         decklist, decklists, isLoading, changeDeckName, fetchAllUserDecklists, fetchAllDecklists, clearDecklist,
-        fetchAllCards, addCardToDecklist, removeCardFromDecklist
+        fetchAllCards, addCardToDecklist, removeCardFromDecklist, removeDecklist
     }), [decklist, decklists, isLoading]);
     return <DecklistContext.Provider value={value}>{children}</DecklistContext.Provider>
 }
