@@ -10,7 +10,7 @@ const Navbar = () => {
 
     return (
         <>
-            <div className={`${showDrawer ? 'display' : 'hidden'} bg-white fixed top-0 left-0 min-h-[100vh] max-h-[100vh]
+            <div className={`transform ${showDrawer ? 'animate-slide-in' : 'translate-x-[-100%] animate-slide-out'} bg-white fixed top-0 left-0 min-h-[100vh] max-h-[100vh]
             flex flex-col space-y-4 w-[35vw]`}>
                 <Link URL="/decklists">All decklists</Link>
                     {
