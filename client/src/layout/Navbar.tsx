@@ -2,16 +2,22 @@ import useCallContext from "@hooks/useCallContext";
 import NavLink from "@components/NavLink";
 import { UserContext } from "@context/UserContext";
 import Hamburger from "@assets/Hambuger";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 const Navbar = () => {
     const userContext = useCallContext(UserContext);
     const [showDrawer, setShowDrawer] = useState(false);
+    const location = useLocation();
 
+    useEffect(() => {
+        setShowDrawer(false);
+    }, [location]);
+    
     return (
         <>
             <div className={`transform ${showDrawer ? 'animate-slide-in' : 'translate-x-[-100%] animate-slide-out'} bg-white fixed top-0 left-0 min-h-[100vh] max-h-[100vh]
-            flex flex-col space-y-4 w-[35vw] justify-center p-5`}>
+            flex flex-col space-y-4 w-[35vw] justify-center p-5 shadow-2xl`}>
                 <NavLink URL="/"> Home </NavLink>
                 <NavLink URL="/decklists">All decklists</NavLink>
                     {
