@@ -9,7 +9,7 @@ const Home = () => {
         <img src={blueEyes} className='z-10 h-[10em] w-[14em]'/>
         <img src={pedestal} className='mt-[-2em] h-[10em] w-[10em] z-0'/>
       </div>
-      <div className="flex flex-col h-full w-[50%] justify-center space-y-5">
+      <div className="flex flex-col h-full w-[50%] justify-center space-y-5 mb-5">
         <h1 className='text-3xl font-semibold'>Master your deck, dominate the duel!</h1>
         <p className=''>
           Welcome to Deck master, the ultimate hub for Yu-Gi-Oh! deck-building enthusiasts! Whether you&apos;re
