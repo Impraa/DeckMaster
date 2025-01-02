@@ -11,7 +11,7 @@ const ManageDecklist = () => {
     const navigate = useNavigate();
 
     useLayoutEffect(() => {
-        if (!userContext || (!userContext.user && !userContext.isLoading) || userContext.error) return navigate('/');
+        if (!userContext || (!userContext.user && !userContext.isLoading) || userContext.error) return navigate('/login');
     }, [userContext, navigate])
 
     return(
