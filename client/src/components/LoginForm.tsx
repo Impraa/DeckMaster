@@ -4,6 +4,8 @@ import { UserContext } from "@context/UserContext";
 import useCallContext from "@hooks/useCallContext";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Input from "./Input";
+import { DisplayErrorMessage } from "@/utils/helperFunctions";
 
 const LoginForm = () => {
     const userContext = useCallContext(UserContext);
@@ -47,10 +49,11 @@ const LoginForm = () => {
     
     return (
         <>
-            <form onSubmit={handleSubmit} className="flex flex-col w-[50%]">
-                <input type="text" placeholder="E-mail/Username" name="identificator" onChange={handleIDChange}/>
-                <input type="text" placeholder="Password" name="password" onChange={handlePassChange}/>
-                <input type="checkbox" onChange={handleRememberMe} />
+            {userContext && <DisplayErrorMessage error={userContext.error} />}
+            <form onSubmit={handleSubmit} className="flex flex-col items-start">
+                <Input inputName="identificator" inputType="text" labelText="Email/Username" handleChange={handleIDChange} />
+                <Input inputName="password" inputType="password" labelText="Password" handleChange={handlePassChange} />
+                <Input inputName="rememberMe" inputType="checkbox" labelText="Remember me" handleChange={handleRememberMe} />
                 <button type="submit">Login</button>
             </form>
         </>
