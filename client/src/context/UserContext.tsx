@@ -18,12 +18,14 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
           setIsLoading(true);
           const response = await refreshUserAsync();
           const { error, data } = response;
-        if (!error && isValidUser(data.user))
-        {
+        if (!error && isValidUser(data.user)) {
           setUser(data.user);
           setError(null);
         }
-        else setError(data);
+        else
+        {
+          if(data !== "No token present" ) setError(data);
+        }
       };
     
       fetchUserData();
