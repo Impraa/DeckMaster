@@ -17,7 +17,7 @@ const Navbar = () => {
     return (
         <>
             <div className={`transform ${showDrawer ? 'animate-slide-in' : 'translate-x-[-100%] animate-slide-out'} bg-white fixed top-0 left-0 min-h-[100vh] max-h-[100vh]
-            flex flex-col space-y-4 w-[35vw] justify-center p-5 shadow-2xl`}>
+            flex flex-col space-y-4 w-[35vw] justify-center p-5 shadow-2xl z-50`}>
                 <NavLink URL="/"> Home </NavLink>
                 <NavLink URL="/decklists">All decklists</NavLink>
                     {
