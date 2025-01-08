@@ -105,7 +105,7 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
 
   const value = React.useMemo(() => ({
     user, isLoading, error,
-    logoutUser, updateUser, loginUser, registerUser, isUserDeckOwner
+    logoutUser, updateUser, loginUser, registerUser, isUserDeckOwner,setError
   }), [user, isLoading, error]);
 
   return <UserContext.Provider value={value}> {children} </UserContext.Provider>;

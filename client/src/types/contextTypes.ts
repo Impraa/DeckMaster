@@ -7,6 +7,7 @@ export interface IUserContextValue{
     user: IUser | null,
     isLoading: boolean,
     error: string | null,
+    setError: React.Dispatch<React.SetStateAction<string | null>>
     isUserDeckOwner: (userId: number, deckId:number) => Promise<boolean>,
     logoutUser: () => void,
     updateUser: (id: number, formData: IUpdateUserData) => void,

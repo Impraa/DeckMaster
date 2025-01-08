@@ -55,7 +55,7 @@ const LoginForm = () => {
                 <Input inputName="identificator" inputType="text" labelText="Email/Username" handleChange={handleIDChange} />
                 <Input inputName="password" inputType="password" labelText="Password" handleChange={handlePassChange} />
                 <Input inputName="rememberMe" inputType="checkbox" labelText="Remember me" handleChange={handleRememberMe} />
-                <Button type="submit" style="danger">Login</Button>
+                <Button type="submit" style="normal">Login</Button>
             </form>
         </>
     )
