@@ -11,7 +11,8 @@ export default {
       },
       animation: {
         'slide-in': 'slideIn 0.25s ease-out',
-        'slide-out': 'slideOut 0.25s ease-out'
+        'slide-out': 'slideOut 0.25s ease-out',
+        'appear': 'appear 0.3s ease-out'
       },
       keyframes: {
         slideIn: {
@@ -21,6 +22,11 @@ export default {
         slideOut: {
           '0%' : { transform: 'translateX(0%)' },
           '100%' : { transform: 'translateX(-100%)' }
+        },
+        appear:
+        {
+          '0%': { opacity: '0%' },
+          '100%': { opacity: '100%' }
         }
       }
     },
