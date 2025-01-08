@@ -2,6 +2,7 @@ import { IUserContextValue } from "@/types/contextTypes";
 import React, { createContext, useLayoutEffect, useState } from "react";
 import { isValidUser, IUpdateUserData, IUser, LoginUser } from "../../../types/user";
 import { isUserDeckOwnerAsync, loginUserAsync, logoutUserAsync, refreshUserAsync, registerUserAsync, updateUserAsync } from "@services/User";
+import { useLocation } from "react-router-dom";
 
 export const UserContext = createContext<IUserContextValue | null>(null);
 
@@ -9,6 +10,7 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
   const [user, setUser] = useState<IUser | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const location = useLocation();
 
   useLayoutEffect(() => {
     //refresh user
@@ -18,7 +20,8 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
           setIsLoading(true);
           const response = await refreshUserAsync();
           const { error, data } = response;
-        if (!error && isValidUser(data.user)) {
+        if (!error && isValidUser(data.user))
+        {
           setUser(data.user);
           setError(null);
         }
@@ -35,6 +38,10 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
       setIsLoading(false);
     }
   }, [user])
+
+  useLayoutEffect(() => {
+    setError(null);
+  },[location])
 
   const loginUser = async (formData: LoginUser) => {
     setIsLoading(true);
