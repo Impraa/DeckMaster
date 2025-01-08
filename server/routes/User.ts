@@ -37,7 +37,7 @@ router.post('/register', async (req: Request, res: Response) => {
     } 
     catch (error) 
     {
-        res.status(500).json('Email or password incorrect, please try again.')
+        res.status(500).json('Email or username already exists, please try again.')
     }
 });
 
