@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Input from "./Input";
 import { DisplayErrorMessage } from "@/utils/helperFunctions";
+import Button from "./Button";
 
 const LoginForm = () => {
     const userContext = useCallContext(UserContext);
@@ -54,7 +55,7 @@ const LoginForm = () => {
                 <Input inputName="identificator" inputType="text" labelText="Email/Username" handleChange={handleIDChange} />
                 <Input inputName="password" inputType="password" labelText="Password" handleChange={handlePassChange} />
                 <Input inputName="rememberMe" inputType="checkbox" labelText="Remember me" handleChange={handleRememberMe} />
-                <button type="submit">Login</button>
+                <Button type="submit" style="danger">Login</Button>
             </form>
         </>
     )

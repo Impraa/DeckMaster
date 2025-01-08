@@ -4,7 +4,7 @@ export const DisplayErrorMessage: React.FC<{error:string | null}> = ({ error }) 
     if (error)
     {
         return (
-            <div className="bg-red-400 p-5 my-2 rounded-lg text-white animate-appear">
+            <div className="bg-danger p-5 my-2 rounded-lg text-white animate-appear">
                 <h2 className="text-lg font-bold">Error</h2>
                 <p>{error}</p>
             </div>

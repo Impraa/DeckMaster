@@ -8,6 +8,8 @@ export default {
     extend: {
       colors: {
         'primary': '#b86711',
+        'danger': '#cf5f5f',
+        'success': '#78bd6d'
       },
       animation: {
         'slide-in': 'slideIn 0.25s ease-out',
