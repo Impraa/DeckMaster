@@ -147,7 +147,7 @@ router.put('/:id', async (req: Request, res: Response) => {
 
             if (!bcrypt.compareSync(oldPassword, user.dataValues.password))
             {
-                res.status(404).json("Email or password incorrect");
+                res.status(404).json("Password is incorrect please try again");
                 return;
             }
 
