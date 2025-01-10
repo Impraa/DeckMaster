@@ -4,6 +4,7 @@ import { UserContext } from "@context/UserContext";
 import Hamburger from "@assets/Hambuger";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import Button from "@components/Button";
 
 const Navbar = () => {
     const userContext = useCallContext(UserContext);
@@ -27,8 +28,8 @@ const Navbar = () => {
                                     {userContext.user.role === 'ADMIN' && <NavLink URL="/manage-cards">Manage Cards</NavLink>}
                                     <NavLink URL="/manage-decklist">Manage Decklist</NavLink>
                                     <div className="flex flex-col space-y-4 items-start">
-                                        <p>Hello, <NavLink URL={`/profile/${userContext.user.id}`} >{userContext.user.username}</NavLink></p>
-                                        <button onClick={() => {userContext.logoutUser()}}>Logout</button>
+                                        <p className="text-primary font-semibold">Hello, <NavLink URL={`/profile/${userContext.user.id}`} >{userContext.user.username}</NavLink></p>
+                                        <Button type="button" style="normal" onClick={() => userContext.logoutUser()}>Logout</Button>
                                     </div>
                                 </>
                             ) :
