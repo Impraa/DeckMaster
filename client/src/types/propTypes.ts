@@ -1,4 +1,5 @@
 import React, { ReactNode } from "react";
+import { IUser, IUpdateUserData } from "../../../types/user";
 
 export interface IInput {
     labelText: string,
@@ -12,4 +13,11 @@ export interface IButton {
     type: 'button' | 'submit',
     style: 'normal' | 'inverted' | 'danger' | 'success',
     onClick?: () => void,
+}
+
+export interface IEditProfileForm {
+    user: IUser | null,
+    updateUser: (id: number, formData: IUpdateUserData) => void,
+    setError: (error: string) => void,
+    error: string | null
 }

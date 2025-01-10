@@ -20,7 +20,7 @@ const Button: React.FC<IButton> = ({ children, type, style, onClick = () => {}})
     }
     
     return (
-        <button onClick={onClick} type={type} className={`text-white px-6 py-1 font-medium transition-all ${stylesToApply}`}>
+        <button onClick={onClick} type={type} className={`text-white px-6 py-1 font-medium transition-all rounded-md ${stylesToApply}`}>
             {children}
         </button>
     )
