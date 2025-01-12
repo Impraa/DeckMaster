@@ -1,3 +1,4 @@
+import Button from "@components/Button";
 import ChangableDecklist from "@components/ChangableDecklist"
 import Link from "@components/Link";
 import { DecklistContext } from "@context/DecklistContext";
@@ -31,11 +32,15 @@ const SingleDecklist = () => {
 
     return (
         <>
-            {userContext && userContext.user && (userContext.user.role === 'ADMIN' || isOwner) &&
-                <>
-                < Link URL={`/manage-decklist/${id}`}>Edit deck</Link >
-                <button onClick={onClickHandler}>Delete deck</button>
-                </>}
+            <div className="flex flex-col items-start pl-2 space-y-4 mb-2">
+                {deckContext && deckContext.decklist &&
+                    <h2 className="text-lg text-primary font-smeibold">{deckContext.decklist.name}</h2>}
+                {userContext && userContext.user && (userContext.user.role === 'ADMIN' || isOwner) &&
+                    <>
+                    <Link URL={`/manage-decklist/${id}`}>Edit deck</Link>
+                    <Button style="danger" type="button" onClick={onClickHandler}>Delete deck</Button>
+                    </>}
+            </div>
             <ChangableDecklist />
         </>
     )
