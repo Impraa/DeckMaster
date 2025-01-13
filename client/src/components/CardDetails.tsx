@@ -10,10 +10,10 @@ const CardDetails = () => {
     if (!cardContext) return <Navigate to={'/'} />
 
     return (
-        <div>
+        <div className="hidden lg:block">
             {cardContext.card && (isValidMonster(cardContext.card) || isValidMagic(cardContext.card))?
                 <GeneralCardDetails card={cardContext.card}/>
-                : <p>No card selected</p>
+                : ''
             }
         </div>
     )
