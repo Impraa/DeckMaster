@@ -105,17 +105,17 @@ const ChangableDecklist = () => {
                     quantity: isCardFound ? cardCurrentQuantity : 1,
                     partOfDeck: targetType as 'mainDeck' | 'sideDeck' | 'extraDeck'
                 }
-                console.log(addCardObj.partOfDeck);
                 deckContext.addCardToDecklist(addCardObj, +cardId);
             }
         }
     }
 
     return (
-        <div>
-            <input type="text" value={deckContext.decklist && deckContext.decklist.name ? deckContext.decklist.name : ''}
-                onChange={(e) => deckContext.changeDeckName(e.currentTarget.value)} />
-        <div onDragOver={onDragOverHandler} onDrop={onDropHandler} className="max-h-[80vh] overflow-auto">
+        <div className="lg:border-black lg:border-l lg:px-2 lg:border-r">
+            { window.location.href[3].includes('manage-decklist') &&
+                <input type="text" value={deckContext.decklist && deckContext.decklist.name ? deckContext.decklist.name : ''}
+                onChange={(e) => deckContext.changeDeckName(e.currentTarget.value)} /> }
+            <div onDragOver={onDragOverHandler} onDrop={onDropHandler} className="max-h-[80dvh] overflow-auto">
             <div className="mainDeck min-h-[50vh]"> 
                 <h2>Main deck</h2>
                 <hr />
