@@ -15,7 +15,7 @@ const ManageDecklist = () => {
     }, [userContext, navigate])
 
     return(
-        <div className="grid grid-cols-[1fr_2fr_1fr] px-5 pt-4 gap-x-2">
+        <div className="flex flex-col lg:grid lg:grid-cols-[1fr_2fr_1fr] px-5 pt-4 gap-x-2">
             <CardDetails />
             <ChangableDecklist />
             <CardPool />
