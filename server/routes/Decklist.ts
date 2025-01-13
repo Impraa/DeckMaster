@@ -7,7 +7,7 @@ import { IDecklist, isValidDecklist } from '../../types/decklist';
 import Decklist from '../models/Decklist';
 import Card from '../models/Card';
 import CardDecklist from '../models/CardDecklist';
-import { QueryTypes, where } from 'sequelize';
+import { QueryTypes } from 'sequelize';
 import { authenticateJWT } from '../utils/middelware';
 import UserDecklist from '../models/UserDecklist';
 import { sequelize } from '../utils/database';
@@ -134,7 +134,7 @@ router.post('/card/:id', authenticateJWT, async (req: Request, res: Response) =>
     let reqDecklist: null | IDecklist = null;
     const { quantity, partOfDeck } = req.body;
     const { id } = req.params;  
-    console.log(partOfDeck);
+
     if (req.body.decklist)
     {
         reqDecklist = req.body.decklist;
