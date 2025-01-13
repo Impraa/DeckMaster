@@ -1,15 +1,22 @@
 import { ICardContextValue } from "@/types/contextTypes";
-import { createContext, ReactNode, useMemo, useState } from "react";
+import { createContext, ReactNode, useLayoutEffect, useMemo, useState } from "react";
 import { ICard } from "../../../types/card";
 import { deleteCardAsync, fetchCardsAsync, getCardAsync, updateCardAsync, uploadNewCardAsync } from "@services/Card";
+import { useLocation } from "react-router-dom";
 
 export const CardContext = createContext<ICardContextValue | null>(null);
 
 const CardProvider:React.FC<{children: ReactNode}> = ({children}) => {
     const [cards, setCards] = useState<ICard[]>([]);
     const [card, setCard] = useState<ICard | null>(null);
+    const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [internalOffset, setInternalOffset] = useState<number>(0);
+    const location = useLocation();
+
+     useLayoutEffect(() => {
+        setError(null);
+      },[location])
 
     const fetchCards = async (offset: number) =>
     {
@@ -24,6 +31,7 @@ const CardProvider:React.FC<{children: ReactNode}> = ({children}) => {
                     offset === 0 ? response.data : [...prevCards, ...response.data]
                 ));
             }
+            else setError(response.data);
         }
         setIsLoading(false);
     }
@@ -53,16 +61,15 @@ const CardProvider:React.FC<{children: ReactNode}> = ({children}) => {
                 offset === 0 ? response.data : [...prevCards, ...response.data]
             ));
         }
+        else setError(response.data)
         setIsLoading(false);
     }
 
     const uploadNewCard = async (formData: FormData) => {
         setIsLoading(true);
         const response = await uploadNewCardAsync(formData);
-        if(!response.error)
-        {
-            fetchCards(0);
-        }
+        if (!response.error) fetchCards(0);
+        else setError(response.data);
         setIsLoading(false);
     }
 
@@ -74,26 +81,27 @@ const CardProvider:React.FC<{children: ReactNode}> = ({children}) => {
             setCards((prevCards) => prevCards.filter((card) => card.id !== response.data.card.id));
             setCard(null);
         }
+        else setError(response.data)
         setIsLoading(false);
     }
 
     const updateCard = async (id: number,formData: FormData) => {
         setIsLoading(true);
         const response = await updateCardAsync(id, formData);
-        console.log(response);
         if (!response.error)
         {
             const index = cards.findIndex((card) => card.id === response.data.card.id);
             if (index !== -1) cards.splice(index, 1, response.data.card);
             setCard(response.data.card)
         }
+        else setError(response.data);
         setIsLoading(false);
     }
 
     const value = useMemo(() => ({
-        cards, card, isLoading, fetchCards, fetchCardsWithSearch, setCardDetails,
+        cards, card, error, setError, isLoading, fetchCards, fetchCardsWithSearch, setCardDetails,
         uploadNewCard, deleteCard, updateCard, getCard
-    }), [cards, card, isLoading]);
+    }), [cards, error, card, isLoading]);
     return <CardContext.Provider value={value}> {children} </CardContext.Provider>;
 }
 

@@ -18,9 +18,11 @@ export interface IUserContextValue{
 export interface ICardContextValue{
     cards: ICard[],
     card: ICard | null,
+    error: string | null,
     isLoading: boolean,
     fetchCards: (offset: number) => void,
     getCard: (id: number) => void,
+    setError: React.Dispatch<React.SetStateAction<string | null>>;
     setCardDetails: (id: number) => void,
     fetchCardsWithSearch: (offset: number, searchTerm: string) => void,
     uploadNewCard: (formData: FormData) => void,
