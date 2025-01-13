@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { IUpdateUserData } from "../../../types/user";
 import Input from "./Input";
 import { IEditProfileForm } from "@/types/propTypes";
@@ -12,16 +12,6 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({user, updateUser, setError
             email: user ? user.email : '',
             username: user ? user.username : '',
         });
-
-    useEffect(() => {
-        if (user)
-        {
-            const username = document.querySelector('[name="username"]') as HTMLInputElement;
-            username.value = user.username;
-            const email = document.querySelector('[name="email"]') as HTMLInputElement;
-            email.value = user.email;
-        }
-    }, [])
     
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -55,8 +45,8 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({user, updateUser, setError
         <>
             {error && <DisplayErrorMessage error={error} />}
             <form onSubmit={handleSubmit} className="flex flex-col items-start">
-                <Input inputType="text" inputName="username" labelText="Username" handleChange={handleChange} />
-                <Input inputType="text" inputName="email" labelText="Email" handleChange={handleChange} />
+                <Input inputType="text" inputName="username" labelText="Username" handleChange={handleChange} value={user?.username} />
+                <Input inputType="text" inputName="email" labelText="Email" handleChange={handleChange} value={user?.email} />
                 <Input inputType="password" inputName="oldPassword" labelText="Old Password" handleChange={handleChange} />
                 <Input inputType="password" inputName="newPassword" labelText="New Password" handleChange={handleChange} />
                 <Input inputType="password" inputName="confirmNewPassword" labelText="Confirm New Password" handleChange={handleChange} />

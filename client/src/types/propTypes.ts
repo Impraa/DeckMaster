@@ -6,6 +6,7 @@ export interface IInput {
     labelText: string,
     inputType: string,
     inputName: string,
+    value?: string,
     handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void | undefined,
 }
 
