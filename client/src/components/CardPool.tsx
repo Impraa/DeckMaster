@@ -79,7 +79,7 @@ const CardPool = () => {
                                 onMouseEnter={() => cardContext.setCardDetails(card.id)}
                                 onClick={(e) => handleOnClick(e, card.id)}
                                 onDragStart={(e) => handleDragStart(e,card.id)}
-                                src={`http://localhost:8000${card.cardImage}`} className=" w-20" />
+                                src={`http://localhost:8000${card.cardImage}`} className="w-20 cursor-pointer" />
                         )
                     }) : (<p>Loading...</p>)
                 }
