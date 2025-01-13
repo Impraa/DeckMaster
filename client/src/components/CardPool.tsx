@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { ModalContext } from "@context/ModalContext";
 import { DecklistContext } from "@context/DecklistContext";
+import Input from "./Input";
 
 const CardPool = () => {
     const cardContext = useCallContext(CardContext);
@@ -66,9 +67,9 @@ const CardPool = () => {
     }
 
     return (
-        <div onDrop={onDropHandler} onDragOver={onDragOverHandler}  className="cardPool flex flex-col">
-            <input placeholder="Search..." onChange={onChange} />
-            <div className="cardPool grid grid-cols-4 gap-4 max-h-[85vh] overflow-auto" onScroll={handleScroll} ref={containerRef}>
+        <div onDrop={onDropHandler} onDragOver={onDragOverHandler} className="cardPool flex flex-col">
+            <Input labelText="Search" inputName="search" inputType="text" handleChange={onChange} />
+            <div className={`cardPool mt-4 grid grid-cols-4 ${window.location.href.split('/')[3] === 'manage-cards' && 'sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12'} gap-4 max-h-[80dvh] overflow-auto`} onScroll={handleScroll} ref={containerRef}>
                 {
                     cardContext.cards.length > 0 ? cardContext.cards.map((card) => {
                         return (
