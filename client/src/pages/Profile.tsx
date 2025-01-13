@@ -6,6 +6,7 @@ import { IUser } from "../../../types/user";
 import { fetchSingleUserAsync } from "@services/User";
 import Link from "@components/Link";
 import { DecklistContext } from "@context/DecklistContext";
+import DecklistCard from "@components/DecklistCard";
 
 const Profile = () => {
     const deckContext = useCallContext(DecklistContext);
@@ -37,19 +38,19 @@ const Profile = () => {
     }
 
     return (
-        <div>
-            {foundUser ? foundUser.username : ""}'s profile
-            {userContext && id && userContext.user && userContext.user.id === +id ?
-                (<div>
-                    <Link URL={`/edit-profile/${userContext.user.id}`}>Edit profile</Link>
-                </div>)
-                : (<></>)}
-            {deckContext && deckContext.decklists.length > 0 ?
-                deckContext.decklists.map((decklist) => {
-                    return (<Link URL={`/decklist/${decklist.id}`} key={decklist.id}> 
-                        <h2>{ decklist.name }</h2>
-                </Link>)
-            }) : <p>There are no decklists associated with this user</p> }
+        <div className="flex justify-center w-full">
+            <div className="flex flex-col space-y-4 w-[85dvw]">
+                <h2 className="text-2xl self-start">{foundUser ? foundUser.username : ""}'s profile</h2>
+                {userContext && id && userContext.user && userContext.user.id === +id ?
+                    (<>
+                        <Link URL={`/edit-profile/${userContext.user.id}`}>Edit profile</Link>
+                    </>)
+                    : (<></>)}
+                {deckContext && deckContext.decklists.length > 0 ?
+                    deckContext.decklists.map((decklist) => {
+                        return (<DecklistCard key={decklist.id} decklist={decklist} link={`/decklist/${decklist.id}`} />)
+                }) : <h2 className="text-lg font-semibold">There are no decklists associated with this user</h2> }
+            </div>
         </div>
     )
 }
