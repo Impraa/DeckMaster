@@ -1,9 +1,9 @@
 import { IDecklistContextValue } from "@/types/contextTypes";
-import { createContext, ReactNode, useMemo, useState } from "react";
+import { createContext, ReactNode, useLayoutEffect, useMemo, useState } from "react";
 import { IAddCard, IDecklist, isValidDecklist } from "../../../types/decklist";
 import { asyncAddCardToDecklist, asyncRemoveCardFromDecklist, asyncFetchAllCards, asyncFetchAllDecklists, asyncFetchAllUserDecklists, asyncRemoveDecklist } from "@services/Decklist";
 import { ICard, IMonsterCard } from "../../../types/card";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export const DecklistContext = createContext<IDecklistContextValue | null>(null);
 
@@ -11,7 +11,13 @@ const DecklistProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const navigate = useNavigate();
     const [decklist, setDecklist] = useState<IDecklist | null>(null);
     const [decklists, setDecklists] = useState<IDecklist[]>([]);
+    const [error, setError] = useState<string | null>("");
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const location = useLocation();
+
+    useLayoutEffect(() => {
+            setError(null);
+          },[location])
 
     const fetchAllCards = async (id:number) => {
         setIsLoading(true);
@@ -26,10 +32,8 @@ const DecklistProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                 sideDeck: []
             };
             
-            if (response.data.decklist.allCards && isValidDecklist(processedDecklist))
-            {
-                for (const card of response.data.decklist.allCards as (ICard | IMonsterCard)[])
-                {
+            if (response.data.decklist.allCards && isValidDecklist(processedDecklist)) {
+                for (const card of response.data.decklist.allCards as (ICard | IMonsterCard)[]) {
                     if (card.partOfDeck === 'extraDeck') processedDecklist.extraDeck.push(card);
                     else if (card.partOfDeck === 'mainDeck') processedDecklist.mainDeck.push(card);
                     else processedDecklist.sideDeck.push(card);
@@ -38,40 +42,36 @@ const DecklistProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
             
             setDecklist(processedDecklist);
         }
+        else setError(response.data);
         setIsLoading(false);
     }
 
     const fetchAllUserDecklists = async (userId: number) => {
         setIsLoading(true);
         const response = await asyncFetchAllUserDecklists(userId);
-        if (!response.error)
-        {
-            setDecklists(response.data.decklists);
-        }
+        if (!response.error) setDecklists(response.data.decklists);
+        else setError(response.data);
+        setIsLoading(false);
     }
 
     const fetchAllDecklists = async () => {
         setIsLoading(true);
         const response = await asyncFetchAllDecklists();
-        if (!response.error)
-        {
-            setDecklists(response.data.decklists)
-        }
+        if (!response.error) setDecklists(response.data.decklists)
+        else setError(response.data)
         setIsLoading(false);
     }
 
     const addCardToDecklist = async (formData: IAddCard, cardId: number) => {
         setIsLoading(true);
         const response = await asyncAddCardToDecklist(formData, cardId);
-        if (!response.error)
-        {
+        if (!response.error) {
             const { card, decklist } = response.data;
-            const { quantity, partOfDeck, decklistId, name } = decklist; 
+            const { quantity, partOfDeck, decklistId, name } = decklist;
             const insertedCard = card;
             insertedCard.quantity = quantity;
             insertedCard.partOfDeck = partOfDeck;
-            if (!decklist)
-            {
+            if (!decklist) {
                 setDecklist(() => {
                     const newDecklist: IDecklist = {
                         id: decklistId,
@@ -86,15 +86,13 @@ const DecklistProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                     return newDecklist;
                 });
             }
-            else
-            { 
+            else {
                 setDecklist((oldValue) => {
                     if (!oldValue) return null;
 
                     const deckPart = oldValue![partOfDeck as 'mainDeck' | 'extraDeck' | 'sideDeck'];
                     const isExistant = deckPart.find((card) => card.id === insertedCard.id);
-                    if (isExistant)
-                    {
+                    if (isExistant) {
                         return {
                             ...oldValue,
                             [partOfDeck as 'mainDeck' | 'extraDeck' | 'sideDeck']: deckPart.map((card) =>
@@ -104,31 +102,30 @@ const DecklistProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                             ),
                         };
                     }
-                    else
-                    { 
+                    else {
                         return {
                             ...oldValue,
                             [partOfDeck as 'mainDeck' | 'extraDeck' | 'sideDeck']: [
                                 ...oldValue![partOfDeck as 'mainDeck' | 'extraDeck' | 'sideDeck'],
                                 insertedCard
-                        ] };
+                            ]
+                        };
                     }
                 });
             }
             setIsLoading(false);
             if(window.location.href[3] !== 'manage-decklist') return navigate(`/manage-decklist/${decklistId}`)
         }
+        else setError(response.data);
         setIsLoading(false);
     }
 
     const removeCardFromDecklist = async (decklistId:number, cardId: number, partOfDeck: 'mainDeck' | 'sideDeck' | 'extraDeck') => {
         setIsLoading(true);
         const response = await asyncRemoveCardFromDecklist(decklistId, cardId, partOfDeck);
-        if (!response.error)
-        {
+        if (!response.error) {
             const cardId = response.data.cardId;
             const partOfDeck = response.data.partOfDeck;
-            console.log(response.data);
             if (response.data.quantity)
             {
                 setDecklist((oldValue) => {
@@ -136,8 +133,7 @@ const DecklistProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                 
                     const updatedDeckPart = oldValue[partOfDeck as 'mainDeck' | 'extraDeck' | 'sideDeck']
                         .map((card) => {
-                            if (card.id === cardId)
-                            {
+                            if (card.id === cardId) {
                                 return { ...card, quantity: card.quantity! - 1 };
                             }
                             return card;
@@ -164,6 +160,7 @@ const DecklistProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                 });
             }
         }
+        else setError(response.data);
         setIsLoading(false);
     }
 
@@ -199,13 +196,14 @@ const DecklistProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
             setDecklists(decklists.filter((decklist) => decklist.id !== decklistId));
             return navigate('/decklists');
         }
+        else setError(response.data);
         setIsLoading(false);
     }
 
     const value = useMemo(() => ({
-        decklist, decklists, isLoading, changeDeckName, fetchAllUserDecklists, fetchAllDecklists, clearDecklist,
+        decklist, decklists, isLoading, error, setError, changeDeckName, fetchAllUserDecklists, fetchAllDecklists, clearDecklist,
         fetchAllCards, addCardToDecklist, removeCardFromDecklist, removeDecklist
-    }), [decklist, decklists, isLoading]);
+    }), [decklist, error, decklists, isLoading]);
     return <DecklistContext.Provider value={value}>{children}</DecklistContext.Provider>
 }
 

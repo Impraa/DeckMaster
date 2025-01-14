@@ -40,6 +40,8 @@ export interface IDecklistContextValue{
     decklist: IDecklist | null,
     decklists: IDecklist[],
     isLoading: boolean,
+    error: string | null,
+    setError: React.Dispatch<React.SetStateAction<string | null>>,
     fetchAllCards: (id: number) => void,
     fetchAllUserDecklists: (userId: number) => void,
     fetchAllDecklists: () => void,
