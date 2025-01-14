@@ -99,10 +99,10 @@ const CardProvider:React.FC<{children: ReactNode}> = ({children}) => {
     }
 
     const value = useMemo(() => ({
-        cards, card, error, setError, isLoading, fetchCards, fetchCardsWithSearch, setCardDetails,
+        cards, card, error, setError, setCard, isLoading, fetchCards, fetchCardsWithSearch, setCardDetails,
         uploadNewCard, deleteCard, updateCard, getCard
     }), [cards, error, card, isLoading]);
-    return <CardContext.Provider value={value}> {children} </CardContext.Provider>;
+    return <CardContext.Provider value={value}>{children}</CardContext.Provider>;
 }
 
 export default CardProvider;

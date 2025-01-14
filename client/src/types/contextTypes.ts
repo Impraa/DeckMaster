@@ -23,6 +23,7 @@ export interface ICardContextValue{
     fetchCards: (offset: number) => void,
     getCard: (id: number) => void,
     setError: React.Dispatch<React.SetStateAction<string | null>>;
+    setCard: React.Dispatch<React.SetStateAction<ICard | null>>;
     setCardDetails: (id: number) => void,
     fetchCardsWithSearch: (offset: number, searchTerm: string) => void,
     uploadNewCard: (formData: FormData) => void,

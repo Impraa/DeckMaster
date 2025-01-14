@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { ModalContext } from "@context/ModalContext";
 import { DecklistContext } from "@context/DecklistContext";
-import Input from "./Input";
+import Input from "@components/Input";
+import Link from "@components/Link";
 
 const CardPool = () => {
     const cardContext = useCallContext(CardContext);
@@ -68,6 +69,7 @@ const CardPool = () => {
 
     return (
         <div onDrop={onDropHandler} onDragOver={onDragOverHandler} className="cardPool flex flex-col">
+            {window.location.href.split('/')[3] === 'manage-cards' ? <Link URL="/card">Add a card</Link> : ''}
             <Input labelText="Search" inputName="search" inputType="text" handleChange={onChange} />
             <div className={`cardPool mt-4 grid grid-cols-4 ${window.location.href.split('/')[3] === 'manage-cards' && 'sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12'} gap-4 max-h-[80dvh] overflow-auto`} onScroll={handleScroll} ref={containerRef}>
                 {

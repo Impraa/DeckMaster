@@ -2,10 +2,10 @@ import CardForm from "@components/CardForm";
 import { UserContext } from "@context/UserContext";
 import useCallContext from "@hooks/useCallContext";
 import { useLayoutEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Card = () => {
-
+    const { id } = useParams();
     const userContext = useCallContext(UserContext);
     const navigate = useNavigate();
 
@@ -15,9 +15,11 @@ const Card = () => {
     }, [userContext, navigate])
 
     return (
-        <div>
-            Add Card
-            <CardForm/>
+        <div className="flex items-center justify-center h-[85dvh]">
+            <div className="flex flex-col">
+                <h2 className="self-start font-bold text-2xl"> {id ? <>Update card</> : <>Add Card</>} </h2>
+                <CardForm/>
+            </div>
         </div>
     )
 }

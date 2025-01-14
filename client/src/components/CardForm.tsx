@@ -5,6 +5,9 @@ import 'react-dropdown/style.css';
 import useCallContext from "@hooks/useCallContext";
 import { CardContext } from "@context/CardContext";
 import { Navigate, useParams } from "react-router-dom";
+import { DisplayErrorMessage } from "@/utils/helperFunctions";
+import Input from "./Input";
+import Button from "./Button";
 
 const CardForm = () => {
     const { id } = useParams();
@@ -23,12 +26,12 @@ const CardForm = () => {
             cardContext.getCard(+id);
             setIsUpdate(true);
         }
+        else if (cardContext && !id) cardContext.setCard(null);
     }, [id])
 
     useEffect(() => {
-        if (cardContext && cardContext.card)
+        if (cardContext && cardContext.card && id)
         {
-            console.log(cardContext.card.humanReadableCardType.split(' '));
             const cardType = cardContext.card.humanReadableCardType.split(' ')[--cardContext.card.humanReadableCardType.split(' ').length].toLocaleLowerCase() as 'spell' | 'trap' | 'monster';
             setTypeOfCard(cardType);
             setFormData(cardContext.card);
@@ -81,30 +84,45 @@ const CardForm = () => {
     }
 
     return (
-        <div className="flex flex-col items-center w-full">
-            <select onChange={e => setTypeOfCard(e.currentTarget.value as 'monster' | 'spell' | 'trap')} value={typeOfCard as string ?? ''}>
+        <div className="flex flex-col items-start space-y-1 mt-4">
+            {cardContext && <DisplayErrorMessage error={cardContext.error} />}
+            <div className="flex">
+                <h2 className="text-primary text-md font-semibold">Select card type:</h2>
+                <select onChange={e => setTypeOfCard(e.currentTarget.value as 'monster' | 'spell' | 'trap')} value={typeOfCard as string ?? ''}>
                 <option hidden>Please select a card type</option>
                 <option value="monster">Monster card</option>
                 <option value="spell">Spell card</option>
                 <option value="trap">Trap card</option>    
-            </select>
+                </select>
+            </div>
             { typeOfCard && (
-                <form className="flex flex-col w-[75vw]" onSubmit={handleSubmit} encType="multipart/form-data">
-                    <input type="text" placeholder="Card Name" name="name" onChange={handleFormChange} value={formData?.name ?? ''} />
-                    <textarea placeholder="Card text" name="cardText" onChange={handleFormChange} value={formData?.cardText ?? ''}></textarea>
-                    <label htmlFor="cardImage">Card Image upload</label>
-                    <input type="file" id="cardImage" name="cardImage" className="hidden" onChange={handleImageUpload}/>
-                    {cardImage && <p>Uploaded: {cardImage.name}</p>}
-                    <Dropdown onChange={(e) => {handleDropdownChange(e, 'humanReadableCardType')}} options={humanReadbleTypes} value={formData?.humanReadableCardType ?? ''} />
+                <form className="flex flex-col items-start space-y-4" onSubmit={handleSubmit} encType="multipart/form-data">
+                    <Input inputType="text" labelText="Card name" inputName="name" handleChange={handleFormChange} value={formData?.name} />
+                    <div className="flex flex-col">
+                        <label className="text-md text-primary font-semibold">Card flavour text/effect</label>
+                        <textarea cols={50} placeholder="Card text" name="cardText" onChange={handleFormChange} value={formData?.cardText ?? ''}></textarea>
+                    </div>
+                    <Input inputType="file" inputName="cardImage" handleChange={handleImageUpload} labelText="Upload card image" />
+                    <div className="flex">
+                        <label className="text-md font-semibold text-primary">Choose type of card:</label>
+                        <Dropdown onChange={(e) => {handleDropdownChange(e, 'humanReadableCardType')}} options={humanReadbleTypes} value={formData?.humanReadableCardType ?? ''} />
+                    </div>
                     {typeOfCard === 'monster' ?
                         <>
-                            <Dropdown options={cardRaces} onChange={(e) => {handleDropdownChange(e, 'race')}} value={formData?.race ?? ''} />
-                            <Dropdown options={attributeTypes} onChange={(e) => {handleDropdownChange(e, 'attribute')}} value={formData?.attribute ?? ''}/>
-                            <input type="number" min={0} max={12} placeholder="Level" name="level" onChange={handleFormChange} value={formData?.level ?? ''} />
-                            <input type="number" min={0} placeholder="ATK" name="atk" onChange={handleFormChange} value={formData?.atk ?? ''}/>
-                            <input type="number" min={0} placeholder="DEF" name="def" onChange={handleFormChange} value={formData?.def ?? ''}/>
+                            <div className="flex">
+                                <label className="text-md text-primary font-semibold">Choose monster type:</label>
+                                <Dropdown options={cardRaces} onChange={(e) => {handleDropdownChange(e, 'race')}} value={formData?.race ?? ''} />
+                            </div>
+                            <div className="flex">
+                                <label className="text-md text-primary font-semibold">Choose monster attribute:</label>
+                                <Dropdown options={attributeTypes} onChange={(e) => { handleDropdownChange(e, 'attribute') }} value={formData?.attribute ?? ''} />
+                            </div>
+                            <Input inputType="number" inputName="level" handleChange={handleFormChange} value={formData?.level} labelText="Card level" />
+                            <Input inputType="number" inputName="atk" handleChange={handleFormChange} value={formData?.atk?.toString()} labelText="Card ATK" />
+                            <Input inputType="number" inputName="def" handleChange={handleFormChange} value={formData?.def?.toString()} labelText="Card DEF" />
+
                         </> : <></>}
-                    <button type="submit">Save</button>
+                    <Button type="submit" style="normal">Save</Button>
                 </form>      
             )}
         </div>
