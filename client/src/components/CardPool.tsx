@@ -63,14 +63,17 @@ const CardPool = () => {
         e.preventDefault();
         const cardId = e.dataTransfer.getData("cardId");
         const parentContainer = e.dataTransfer.getData("parentContainer") as 'mainDeck' | 'sideDeck' | 'extraDeck';
-        if (deckContext && deckContext.decklist) deckContext.removeCardFromDecklist(deckContext.decklist.id, +cardId, parentContainer);
-        else console.log('Failed to remove card');
+        if (deckContext)
+        {
+            if (deckContext.decklist) deckContext.removeCardFromDecklist(deckContext.decklist.id, +cardId, parentContainer);
+            else deckContext.setError('Failed to remove card');
+        }
     }
 
     return (
         <div onDrop={onDropHandler} onDragOver={onDragOverHandler} className="cardPool flex flex-col">
             {window.location.href.split('/')[3] === 'manage-cards' ? <Link URL="/card">Add a card</Link> : ''}
-            <Input labelText="Search" inputName="search" inputType="text" handleChange={onChange} />
+            <Input labelText="Search" inputName="search" inputType="text" handleChange={onChange} value={searchQuery} />
             <div className={`cardPool mt-4 grid grid-cols-4 ${window.location.href.split('/')[3] === 'manage-cards' && 'sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12'} gap-4 max-h-[80dvh] overflow-auto`} onScroll={handleScroll} ref={containerRef}>
                 {
                     cardContext.cards.length > 0 ? cardContext.cards.map((card) => {

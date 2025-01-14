@@ -4,6 +4,8 @@ import useCallContext from "@hooks/useCallContext";
 import { useEffect } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import { IAddCard } from "../../../types/decklist";
+import { DisplayErrorMessage } from "@/utils/helperFunctions";
+import Input from "@components/Input";
 
 const ChangableDecklist = () => {
 
@@ -72,13 +74,13 @@ const ChangableDecklist = () => {
                 if (targetType === 'extraDeck' &&
                     !extraDeckTypes.some((value) => cardContext.card!.humanReadableCardType.toLocaleLowerCase().includes(value)))
                 {
-                    console.log('Sori bed lak');
+                    deckContext.setError("Main deck cards can't be put in the side deck");
                     return;
                 }
                 if(targetType === 'mainDeck' &&
                     extraDeckTypes.some((value) => cardContext.card!.humanReadableCardType.toLocaleLowerCase().includes(value)))
                 {
-                    console.log('Dices kume');
+                    deckContext.setError("Side deck cards can't be put in the main deck");
                     return;
                 }
 
@@ -93,10 +95,7 @@ const ChangableDecklist = () => {
                         if (card.quantity) cardCurrentQuantity = card.quantity;
                         return card;
                     }
-                    else
-                    { 
-                        return false;
-                    }
+                    else return false;
                 });
                 }
 
@@ -110,11 +109,14 @@ const ChangableDecklist = () => {
         }
     }
 
+    const handleDeckNameChange = (e:React.ChangeEvent<HTMLInputElement>) => deckContext.changeDeckName(e.currentTarget.value)
+
     return (
         <div className="lg:border-black lg:border-l lg:px-2 lg:border-r">
-            { window.location.href[3].includes('manage-decklist') &&
-                <input type="text" value={deckContext.decklist && deckContext.decklist.name ? deckContext.decklist.name : ''}
-                onChange={(e) => deckContext.changeDeckName(e.currentTarget.value)} /> }
+            {deckContext && <DisplayErrorMessage error={deckContext.error} />}
+            {window.location.href.split('/')[3] === ('manage-decklist') &&
+                <Input inputName="name" labelText="Deck name" value={deckContext.decklist?.name}
+                    handleChange={handleDeckNameChange} inputType="text" />}
             <div onDragOver={onDragOverHandler} onDrop={onDropHandler} className="max-h-[80dvh] overflow-auto">
             <div className="mainDeck min-h-[50vh]"> 
                 <h2>Main deck</h2>
