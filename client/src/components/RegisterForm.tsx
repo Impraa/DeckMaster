@@ -50,10 +50,10 @@ const RegisterForm = () => {
         <>
             {userContext && <DisplayErrorMessage error={userContext.error} />}
             <form onSubmit={handleSubmit} className="flex flex-col items-start">
-                <Input labelText={"Username"} inputType={"text"} inputName={"username"} handleChange={handleChange} />
-                <Input labelText={"Email"} inputType={"text"} inputName={"email"} handleChange={handleChange} />
-                <Input labelText={"Password"} inputType={"password"} inputName={"password"} handleChange={handleChange} />
-                <Input labelText={"Confirm Password"} inputType={"password"} inputName={"confirmPassword"} handleChange={handleChange} />
+                <Input labelText={"Username"} inputType={"text"} inputName={"username"} handleChange={handleChange} value={formData.username} />
+                <Input labelText={"Email"} inputType={"text"} inputName={"email"} handleChange={handleChange} value={formData.email} />
+                <Input labelText={"Password"} inputType={"password"} inputName={"password"} handleChange={handleChange} value={formData.password} />
+                <Input labelText={"Confirm Password"} inputType={"password"} inputName={"confirmPassword"} handleChange={handleChange} value={formData.confirmPassword} />
                 <Button type="submit" style="normal" >Register</Button>
             </form>
         </>

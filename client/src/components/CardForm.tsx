@@ -102,7 +102,11 @@ const CardForm = () => {
                         <label className="text-md text-primary font-semibold">Card flavour text/effect</label>
                         <textarea cols={50} placeholder="Card text" name="cardText" onChange={handleFormChange} value={formData?.cardText ?? ''}></textarea>
                     </div>
-                    <Input inputType="file" inputName="cardImage" handleChange={handleImageUpload} labelText="Upload card image" />
+                    <div className="flex">
+                        <label htmlFor="cardImage" className="text-primary text-md font-semibold cursor-pointer">Card Image upload: </label>
+                        <input type="file" id="cardImage" name="cardImage" className="hidden" onChange={handleImageUpload}/>
+                        {cardImage && <h2 className="text-primary text-md font-semibold">Uploaded-{cardImage.name}</h2>}
+                    </div>
                     <div className="flex">
                         <label className="text-md font-semibold text-primary">Choose type of card:</label>
                         <Dropdown onChange={(e) => {handleDropdownChange(e, 'humanReadableCardType')}} options={humanReadbleTypes} value={formData?.humanReadableCardType ?? ''} />

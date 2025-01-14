@@ -47,9 +47,9 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({user, updateUser, setError
             <form onSubmit={handleSubmit} className="flex flex-col items-start">
                 <Input inputType="text" inputName="username" labelText="Username" handleChange={handleChange} value={user?.username} />
                 <Input inputType="text" inputName="email" labelText="Email" handleChange={handleChange} value={user?.email} />
-                <Input inputType="password" inputName="oldPassword" labelText="Old Password" handleChange={handleChange} />
-                <Input inputType="password" inputName="newPassword" labelText="New Password" handleChange={handleChange} />
-                <Input inputType="password" inputName="confirmNewPassword" labelText="Confirm New Password" handleChange={handleChange} />
+                <Input inputType="password" inputName="oldPassword" labelText="Old Password" handleChange={handleChange} value={formData.oldPassword} />
+                <Input inputType="password" inputName="newPassword" labelText="New Password" handleChange={handleChange} value={formData.newPassword} />
+                <Input inputType="password" inputName="confirmNewPassword" labelText="Confirm New Password" handleChange={handleChange} value={formData.confirmNewPassword} />
                 <Button type="submit" style="normal">Save</Button>
             </form>
         </>

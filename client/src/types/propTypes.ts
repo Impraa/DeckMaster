@@ -6,7 +6,7 @@ export interface IInput {
     labelText: string,
     inputType: string,
     inputName: string,
-    value?: string,
+    value?: string | File,
     handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void | undefined,
 }
 

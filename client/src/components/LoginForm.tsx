@@ -25,7 +25,8 @@ const LoginForm = () => {
         email: "",
         password: "",
         rememberMe: false,
-      });
+    });
+    const [formFieldValue, setFormFieldValue] = useState<string>('');
 
     const handleSubmit = async (e:  React.ChangeEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -34,6 +35,7 @@ const LoginForm = () => {
 
     const handleIDChange = (e:  React.ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
+        setFormFieldValue(value);
         if(value.includes('@')) setFormData({...formData, email: value, username: ""});
         else setFormData({...formData, username: value, email: ""});
     }
@@ -52,8 +54,8 @@ const LoginForm = () => {
         <>
             {userContext && <DisplayErrorMessage error={userContext.error} />}
             <form onSubmit={handleSubmit} className="flex flex-col items-start">
-                <Input inputName="identificator" inputType="text" labelText="Email/Username" handleChange={handleIDChange} />
-                <Input inputName="password" inputType="password" labelText="Password" handleChange={handlePassChange} />
+                <Input inputName="identificator" inputType="text" labelText="Email/Username" handleChange={handleIDChange} value={formFieldValue} />
+                <Input inputName="password" inputType="password" labelText="Password" handleChange={handlePassChange} value={formData.password} />
                 <Input inputName="rememberMe" inputType="checkbox" labelText="Remember me" handleChange={handleRememberMe} />
                 <Button type="submit" style="normal">Login</Button>
             </form>
