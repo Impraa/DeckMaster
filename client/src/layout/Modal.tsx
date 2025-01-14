@@ -19,7 +19,7 @@ const Modal = () => {
     {
         return (
             <div onClick={handleOnClick}  className="fixed top-0 left-0 flex justify-center items-center bg-black/50 h-[100vh] w-[100vw]">
-                <div className="bg-white w-[75vw] h-[75vh] flex">
+                <div className="bg-white w-[85dvw] h-[85dvh] lg:w-[75dvw] lg:h-[75dvh] flex">
                     <ModalDetails />
                 </div>
             </div>
