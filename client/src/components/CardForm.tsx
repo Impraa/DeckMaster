@@ -2,16 +2,15 @@ import { useEffect, useState } from "react";
 import { AttributeTypes, CardTypes, ICard, IMonsterCard, RaceType, RaceTypes } from "../../../types/card";
 import Dropdown, { Option } from 'react-dropdown';
 import 'react-dropdown/style.css';
-import useCallContext from "@hooks/useCallContext";
-import { CardContext } from "@context/CardContext";
-import { Navigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { DisplayErrorMessage } from "@/utils/helperFunctions";
 import Input from "./Input";
 import Button from "./Button";
+import useCardContext from "@hooks/useCardContext";
 
 const CardForm = () => {
     const { id } = useParams();
-    const cardContext = useCallContext(CardContext);
+    const cardContext = useCardContext();
     const [isUpdate, setIsUpdate] = useState<boolean>(false);
     const [typeOfCard, setTypeOfCard] = useState<null | 'monster' | 'spell' | 'trap'>(null);
     const [formData, setFormData] = useState<null | ICard | IMonsterCard>(null);
@@ -20,23 +19,25 @@ const CardForm = () => {
     const [attributeTypes] = useState<string[]>(AttributeTypes);
     const [cardImage, setCardImage] = useState<File | null>(null);
 
+    const { getCard, setCard, card, uploadNewCard, updateCard, error } = cardContext;
+
     useEffect(() => {
-        if (id && !isNaN(+id) && cardContext)
+        if (id && !isNaN(+id))
         {
-            cardContext.getCard(+id);
+            getCard(+id);
             setIsUpdate(true);
         }
-        else if (cardContext && !id) cardContext.setCard(null);
+        else if (!id) setCard(null);
     }, [id])
 
     useEffect(() => {
-        if (cardContext && cardContext.card && id)
+        if (card && id)
         {
-            const cardType = cardContext.card.humanReadableCardType.split(' ')[--cardContext.card.humanReadableCardType.split(' ').length].toLocaleLowerCase() as 'spell' | 'trap' | 'monster';
+            const cardType = card.humanReadableCardType.split(' ')[--card.humanReadableCardType.split(' ').length].toLocaleLowerCase() as 'spell' | 'trap' | 'monster';
             setTypeOfCard(cardType);
-            setFormData(cardContext.card);
+            setFormData(card);
         }
-    }, [cardContext])
+    }, [card, id])
 
     useEffect(() => {
         if (typeOfCard)
@@ -50,8 +51,6 @@ const CardForm = () => {
             }
         }
     }, [typeOfCard])
-
-    if(!cardContext || !cardContext.uploadNewCard) return <Navigate to={'/'} />
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0])
@@ -78,14 +77,14 @@ const CardForm = () => {
             const submissionData = new FormData();
             if(cardImage) submissionData.append('cardImage', cardImage);
             submissionData.append('cardData', JSON.stringify(formData));
-            if (isUpdate && id) cardContext.updateCard(+id, submissionData);
-            else if(cardImage) cardContext.uploadNewCard(submissionData);
+            if (isUpdate && id) updateCard(+id, submissionData);
+            else if(cardImage) uploadNewCard(submissionData);
         }
     }
 
     return (
         <div className="flex flex-col items-start space-y-1 mt-4">
-            {cardContext && <DisplayErrorMessage error={cardContext.error} />}
+            {error && <DisplayErrorMessage error={error} />}
             <div className="flex">
                 <h2 className="text-primary text-md font-semibold">Select card type:</h2>
                 <select onChange={e => setTypeOfCard(e.currentTarget.value as 'monster' | 'spell' | 'trap')} value={typeOfCard as string ?? ''}>

@@ -1,17 +1,17 @@
 import CardForm from "@components/CardForm";
-import { UserContext } from "@context/UserContext";
-import useCallContext from "@hooks/useCallContext";
+import useUserContext from "@hooks/useUserContext";
 import { useLayoutEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 const Card = () => {
     const { id } = useParams();
-    const userContext = useCallContext(UserContext);
+    const userContext = useUserContext();
     const navigate = useNavigate();
 
+    const { user, isLoading, error } = userContext;
+
     useLayoutEffect(() => {
-        if (!userContext || (!userContext.user && !userContext.isLoading) ||
-            userContext.error || (userContext.user && userContext.user.role !== 'ADMIN')) return navigate('/');
+        if ((!user && !isLoading) || error || (user && user.role !== 'ADMIN')) return navigate('/');
     }, [userContext, navigate])
 
     return (

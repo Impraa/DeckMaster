@@ -1,19 +1,20 @@
 import { useState } from "react";
 import { LoginUser} from '../../../types/user';
-import { UserContext } from "@context/UserContext";
-import useCallContext from "@hooks/useCallContext";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Input from "./Input";
 import { DisplayErrorMessage } from "@/utils/helperFunctions";
 import Button from "./Button";
+import useUserContext from "@hooks/useUserContext";
 
 const LoginForm = () => {
-    const userContext = useCallContext(UserContext);
+    const userContext = useUserContext();
     const navigate = useNavigate();
+
+    const { user, loginUser, error } = userContext;
   
     useEffect(() => {
-        if(userContext && userContext.user) 
+        if(user) 
         {
             navigate('/');
             return;
@@ -30,7 +31,7 @@ const LoginForm = () => {
 
     const handleSubmit = async (e:  React.ChangeEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if(userContext) userContext.loginUser(formData);
+        loginUser(formData);
     }
 
     const handleIDChange = (e:  React.ChangeEvent<HTMLInputElement>) => {
@@ -52,7 +53,7 @@ const LoginForm = () => {
     
     return (
         <>
-            {userContext && <DisplayErrorMessage error={userContext.error} />}
+            {error && <DisplayErrorMessage error={error} />}
             <form onSubmit={handleSubmit} className="flex flex-col items-start">
                 <Input inputName="identificator" inputType="text" labelText="Email/Username" handleChange={handleIDChange} value={formFieldValue} />
                 <Input inputName="password" inputType="password" labelText="Password" handleChange={handlePassChange} value={formData.password} />

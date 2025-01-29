@@ -1,17 +1,18 @@
 import CardDetails from "@components/CardDetails";
 import CardPool from "@components/CardPool";
 import ChangableDecklist from "@components/ChangableDecklist";
-import { UserContext } from "@context/UserContext";
-import useCallContext from "@hooks/useCallContext";
+import useUserContext from "@hooks/useUserContext";
 import { useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const ManageDecklist = () => {
-    const userContext = useCallContext(UserContext);
+    const userContext = useUserContext();
     const navigate = useNavigate();
 
+    const { user, isLoading, error } = userContext;
+
     useLayoutEffect(() => {
-        if (!userContext || (!userContext.user && !userContext.isLoading) || userContext.error) return navigate('/login');
+        if (!userContext || (!user && !isLoading) || error) return navigate('/login');
     }, [userContext, navigate])
 
     return(

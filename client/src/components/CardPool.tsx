@@ -1,42 +1,37 @@
-import { CardContext } from "@context/CardContext";
-import useCallContext from "@hooks/useCallContext";
 import { useEffect, useRef, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
-import { ModalContext } from "@context/ModalContext";
-import { DecklistContext } from "@context/DecklistContext";
+import { useNavigate } from "react-router-dom";
 import Input from "@components/Input";
 import Link from "@components/Link";
+import useCardContext from "@hooks/useCardContext";
+import useModalContext from "@hooks/useModalContext";
+import useDecklistContext from "@hooks/useDecklistContext";
 
 const CardPool = () => {
-    const cardContext = useCallContext(CardContext);
-    const modalContext = useCallContext(ModalContext);
-    const deckContext = useCallContext(DecklistContext);
+    const cardContext = useCardContext();
+    const modalContext = useModalContext();
+    const deckContext = useDecklistContext();
     const [offset, setOffset] = useState<number>(0);
     const [searchQuery, setSearchQuery] = useState<string>('');
     const navigate = useNavigate();
     const containerRef = useRef(null);
 
-    useEffect(() => {
-        if (!cardContext) return navigate('/');
-        if (!searchQuery) cardContext.fetchCards(offset)
-    }, [cardContext, navigate, offset])
+    const { removeCardFromDecklist, decklist, setError } = deckContext;
+    const { fetchCards, fetchCardsWithSearch } = cardContext;
 
     useEffect(() => {
-        if (!cardContext) return navigate('/');
-        if(searchQuery) cardContext.fetchCardsWithSearch(offset, searchQuery);
+        if (!searchQuery) fetchCards(offset)
+    }, [navigate, offset])
+
+    useEffect(() => {
+        if(searchQuery) fetchCardsWithSearch(offset, searchQuery);
     }, [searchQuery, navigate, offset])
-
-    if (!cardContext || !modalContext) return <Navigate to={'/'} />;
 
     const handleScroll = () => {
         if (!containerRef.current) return;
 
         const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
         
-        if (scrollHeight - scrollTop <= clientHeight * 1.1 && !cardContext.isLoading)
-        {
-            setOffset((prevOffset) => prevOffset + 1);
-        }
+        if (scrollHeight - scrollTop <= clientHeight * 1.1 && !cardContext.isLoading) setOffset((prevOffset) => prevOffset + 1);
     };
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,11 +58,8 @@ const CardPool = () => {
         e.preventDefault();
         const cardId = e.dataTransfer.getData("cardId");
         const parentContainer = e.dataTransfer.getData("parentContainer") as 'mainDeck' | 'sideDeck' | 'extraDeck';
-        if (deckContext)
-        {
-            if (deckContext.decklist) deckContext.removeCardFromDecklist(deckContext.decklist.id, +cardId, parentContainer);
-            else deckContext.setError('Failed to remove card');
-        }
+        if (decklist) removeCardFromDecklist(decklist.id, +cardId, parentContainer);
+        else setError('Failed to remove card');
     }
 
     return (

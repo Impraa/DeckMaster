@@ -1,35 +1,27 @@
 import DecklistCard from "@components/DecklistCard";
-import { DecklistContext } from "@context/DecklistContext";
-import useCallContext from "@hooks/useCallContext";
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useMemo, useState } from "react";
 import { IDecklist } from "../../../types/decklist";
 import Input from "@components/Input";
+import useDecklistContext from "@hooks/useDecklistContext";
 
 const Decklists = () => {
-    const deckContext = useCallContext(DecklistContext);
+    const deckContext = useDecklistContext();
     const [search, setSearch] = useState<string>("");
-    const [filteredDecklists, setFilteredDecklists] = useState<IDecklist[]>([]);
-    
+
+    const { fetchAllDecklists, decklists } = deckContext;
+
     useLayoutEffect(() => {
-        if (deckContext) deckContext.fetchAllDecklists();
+        fetchAllDecklists();
     }, [])
 
-    useLayoutEffect(() => {
-        if (deckContext) setFilteredDecklists(deckContext.decklists);
-    }, [deckContext?.decklists])
+    const filteredDecklists = useMemo<IDecklist[]>(() => {
+        return decklists.filter(decklist =>
+            decklist.name.toLowerCase().includes(search.toLowerCase())
+        );
+    }, [decklists, search]);
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (deckContext)
-        {
-            const searchTerm = e.target.value.toLowerCase();
-            setSearch(searchTerm);
-
-            const filtered = deckContext.decklists.filter((decklist) =>
-                decklist.name.toLowerCase().includes(searchTerm)
-            );
-
-            setFilteredDecklists(filtered);
-        }    
+        setSearch(e.target.value);
     };
 
     return (

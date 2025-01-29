@@ -1,30 +1,27 @@
-import { CardContext } from "@context/CardContext";
-import { ModalContext } from "@context/ModalContext";
-import { UserContext } from "@context/UserContext";
-import useCallContext from "@hooks/useCallContext";
 import { useEffect } from "react";
-import { Navigate } from "react-router-dom";
 import { isValidMonster } from "../../../types/card";
 import Link from "./Link";
 import Button from "./Button";
-import { DecklistContext } from "@context/DecklistContext";
 import { IAddCard } from "../../../types/decklist";
+import useCardContext from "@hooks/useCardContext";
+import useUserContext from "@hooks/useUserContext";
+import useModalContext from "@hooks/useModalContext";
+import useDecklistContext from "@hooks/useDecklistContext";
 
 const ModalDetails = () => {
-    const cardContext = useCallContext(CardContext);
-    const userContext = useCallContext(UserContext);
-    const modalContext = useCallContext(ModalContext);
-    const deckContext = useCallContext(DecklistContext);
-
-    useEffect(() => {
-        if (cardContext && !cardContext.card && modalContext) modalContext.setIsVisible(false); 
-    }, [cardContext])
-
-    if (!cardContext || !userContext || !deckContext) return <Navigate to={'/'} />
+    const cardContext = useCardContext();
+    const userContext = useUserContext();
+    const modalContext = useModalContext();
+    const deckContext = useDecklistContext();
     
+    const { setIsVisible } = modalContext;
     const { card, deleteCard } = cardContext;
     const { decklist, removeCardFromDecklist, addCardToDecklist } = deckContext;
     const { user } = userContext;
+
+    useEffect(() => {
+        if (!card) setIsVisible(false); 
+    }, [card])
 
     const handleDeleteClick = () => {
         if(card) deleteCard(+card.id);

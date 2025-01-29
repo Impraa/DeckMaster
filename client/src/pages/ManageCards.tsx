@@ -1,15 +1,16 @@
 import CardPool from "@components/CardPool"
-import { UserContext } from "@context/UserContext";
-import useCallContext from "@hooks/useCallContext";
+import useUserContext from "@hooks/useUserContext";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const ManageCards = () => {
-    const userContext = useCallContext(UserContext);
+    const userContext = useUserContext();
     const navigate = useNavigate();
 
+    const { user } = userContext;
+
     useEffect(() => {
-        if (!userContext || (userContext && userContext.user && userContext.user.role !== 'ADMIN')) return navigate('/');
+        if (user && user.role !== 'ADMIN') return navigate('/');
     }, [])
 
     return (

@@ -1,25 +1,24 @@
-import { CardContext } from "@context/CardContext";
-import { DecklistContext } from "@context/DecklistContext";
-import useCallContext from "@hooks/useCallContext";
 import { useEffect } from "react";
-import { Navigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { IAddCard } from "../../../types/decklist";
 import { DisplayErrorMessage } from "@/utils/helperFunctions";
 import Input from "@components/Input";
+import useDecklistContext from "@hooks/useDecklistContext";
+import useCardContext from "@hooks/useCardContext";
 
 const ChangableDecklist = () => {
 
     const { id } = useParams();
-    const deckContext = useCallContext(DecklistContext);
-    const cardContext = useCallContext(CardContext);
+    const deckContext = useDecklistContext();
+    const cardContext = useCardContext();
+
+    const { clearDecklist, fetchAllCards, setError, addCardToDecklist, changeDeckName, decklist, error } = deckContext;
+    const { card, setCardDetails } = cardContext;
 
     useEffect(() => {
-        if (id && !isNaN(+id) && deckContext) deckContext.fetchAllCards(+id);
-        if (!id && deckContext) deckContext.clearDecklist();
+        if (id && !isNaN(+id)) fetchAllCards(+id);
+        if (!id) clearDecklist();
     }, [id])
-    
-    if (!deckContext || !cardContext) return <Navigate to={'/'} />; 
-
 
     const onDragOverHandler = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -68,28 +67,28 @@ const ChangableDecklist = () => {
 
         if (cardId && targetType && deckTypes.includes(targetType)) 
         {
-            if (cardContext.card)
+            if (card)
             {
                 const extraDeckTypes = ['xyz', 'fusion', 'synchro', 'link'];
                 if (targetType === 'extraDeck' &&
-                    !extraDeckTypes.some((value) => cardContext.card!.humanReadableCardType.toLocaleLowerCase().includes(value)))
+                    !extraDeckTypes.some((value) => card!.humanReadableCardType.toLocaleLowerCase().includes(value)))
                 {
-                    deckContext.setError("Main deck cards can't be put in the side deck");
+                    setError("Main deck cards can't be put in the side deck");
                     return;
                 }
                 if(targetType === 'mainDeck' &&
-                    extraDeckTypes.some((value) => cardContext.card!.humanReadableCardType.toLocaleLowerCase().includes(value)))
+                    extraDeckTypes.some((value) => card!.humanReadableCardType.toLocaleLowerCase().includes(value)))
                 {
-                    deckContext.setError("Side deck cards can't be put in the main deck");
+                    setError("Side deck cards can't be put in the main deck");
                     return;
                 }
 
                 let cardCurrentQuantity = 0;
                 let isCardFound = null;
-                if (deckContext.decklist)
+                if (decklist)
                 {
                     isCardFound = (['mainDeck', 'extraDeck', 'sideDeck'] as ('mainDeck' | 'sideDeck' | 'extraDeck')[]).some((deckType) => {
-                    const card = deckContext.decklist![deckType].find((card) => card.id === +cardId);
+                    const card = decklist![deckType].find((card) => card.id === +cardId);
                     if (card)
                     {
                         if (card.quantity) cardCurrentQuantity = card.quantity;
@@ -104,25 +103,25 @@ const ChangableDecklist = () => {
                     quantity: isCardFound ? cardCurrentQuantity : 1,
                     partOfDeck: targetType as 'mainDeck' | 'sideDeck' | 'extraDeck'
                 }
-                deckContext.addCardToDecklist(addCardObj, +cardId);
+                addCardToDecklist(addCardObj, +cardId);
             }
         }
     }
 
-    const handleDeckNameChange = (e:React.ChangeEvent<HTMLInputElement>) => deckContext.changeDeckName(e.currentTarget.value)
+    const handleDeckNameChange = (e:React.ChangeEvent<HTMLInputElement>) => changeDeckName(e.currentTarget.value)
 
     return (
         <div className="lg:border-black lg:border-l lg:px-2 lg:border-r">
-            {deckContext && <DisplayErrorMessage error={deckContext.error} />}
+            {error && <DisplayErrorMessage error={error} />}
             {window.location.href.split('/')[3] === ('manage-decklist') &&
-                <Input inputName="name" labelText="Deck name" value={deckContext.decklist?.name}
+                <Input inputName="name" labelText="Deck name" value={decklist?.name}
                     handleChange={handleDeckNameChange} inputType="text" />}
             <div onDragOver={onDragOverHandler} onDrop={onDropHandler} className="max-h-[80dvh] overflow-auto">
             <div className="mainDeck min-h-[50vh]"> 
                 <h2>Main deck</h2>
                 <hr />
                 <div  className="mainDeck flex flex-row flex-wrap min-h-full">
-                    {deckContext.decklist && deckContext.decklist.mainDeck.map((card) => {
+                    {decklist && decklist.mainDeck.map((card) => {
                         if (card.quantity)
                         {
                             const cards = [];
@@ -132,7 +131,7 @@ const ChangableDecklist = () => {
                                     <img
                                         draggable
                                         key={card.id+i}
-                                        onMouseEnter={() => cardContext.setCardDetails(card.id)}
+                                        onMouseEnter={() => setCardDetails(card.id)}
                                         onDragStart={(e) => handleDragStart(e, card.id)}
                                         src={`http://localhost:8000${card.cardImage}`} className="w-16" />
                                 )
@@ -146,7 +145,7 @@ const ChangableDecklist = () => {
                 <h2>Extra deck</h2>
                 <hr />
                 <div  className="extraDeck flex flex-row flex-wrap">
-                    {deckContext.decklist && deckContext.decklist.extraDeck.map((card) => {
+                    {decklist && decklist.extraDeck.map((card) => {
                         if (card.quantity)
                         {
                             const cards = [];
@@ -156,7 +155,7 @@ const ChangableDecklist = () => {
                                     <img
                                         draggable
                                         key={card.id+i}
-                                        onMouseEnter={() => cardContext.setCardDetails(card.id)}
+                                        onMouseEnter={() => setCardDetails(card.id)}
                                         onDragStart={(e) => handleDragStart(e, card.id)}
                                         src={`http://localhost:8000${card.cardImage}`} className="w-16" />
                                 )
@@ -170,7 +169,7 @@ const ChangableDecklist = () => {
                 <h2>Side deck</h2>
                 <hr />
                 <div  className="sideDeck flex flex-row flex-wrap">
-                    {deckContext.decklist && deckContext.decklist.sideDeck.map((card) => {
+                    {decklist && decklist.sideDeck.map((card) => {
                         if (card.quantity)
                         {
                             const cards = [];
@@ -180,7 +179,7 @@ const ChangableDecklist = () => {
                                     <img
                                         draggable
                                         key={card.id+i}
-                                        onMouseEnter={() => cardContext.setCardDetails(card.id)}
+                                        onMouseEnter={() => setCardDetails(card.id)}
                                         onDragStart={(e) => handleDragStart(e, card.id)}
                                         src={`http://localhost:8000${card.cardImage}`} className="w-16" />
                                 )

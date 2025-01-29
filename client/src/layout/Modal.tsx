@@ -1,6 +1,6 @@
 import ModalDetails from "@components/ModalDetails";
 import { ModalContext } from "@context/ModalContext";
-import useCallContext from "@hooks/useCallContext";
+import useCallContext from "@hooks/useUserContext";
 import { Navigate } from "react-router-dom";
 
 const Modal = () => {
