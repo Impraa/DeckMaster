@@ -4,20 +4,18 @@ import Link from "@components/Link";
 import useDecklistContext from "@hooks/useDecklistContext";
 import useUserContext from "@hooks/useUserContext";
 import { useLayoutEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const SingleDecklist = () => {
     const userContext = useUserContext();
     const deckContext = useDecklistContext();
     const [isOwner, setIsOwner] = useState(false);
-    const navigate = useNavigate();
     const { id } = useParams();
 
     const { user, isUserDeckOwner } = userContext;
     const { clearDecklist, removeDecklist, decklist } = deckContext;
 
     useLayoutEffect(() => {
-        if (!user || !id) return navigate('/')
         return () => {
             clearDecklist();
         }

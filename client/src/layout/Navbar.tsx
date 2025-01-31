@@ -1,16 +1,15 @@
-import useCallContext from "@hooks/useUserContext";
 import NavLink from "@components/NavLink";
-import { UserContext } from "@context/UserContext";
 import Hamburger from "@assets/Hambuger";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Button from "@components/Button";
+import useUserContext from "@hooks/useUserContext";
 
 const Navbar = () => {
-    const userContext = useCallContext(UserContext);
+    const userContext = useUserContext();
     const [showDrawer, setShowDrawer] = useState(false);
     const location = useLocation();
-
+    const { user, logoutUser } = userContext;
     useEffect(() => {
         setShowDrawer(false);
     }, [location]);
@@ -22,14 +21,14 @@ const Navbar = () => {
                 <NavLink URL="/"> Home </NavLink>
                 <NavLink URL="/decklists">All decklists</NavLink>
                     {
-                        userContext && userContext.user ? 
+                        user ? 
                             (
                                 <>
-                                    {userContext.user.role === 'ADMIN' && <NavLink URL="/manage-cards">Manage Cards</NavLink>}
+                                    {user.role === 'ADMIN' && <NavLink URL="/manage-cards">Manage Cards</NavLink>}
                                     <NavLink URL="/manage-decklist">Manage Decklist</NavLink>
                                     <div className="flex flex-col space-y-4 items-start">
-                                        <p className="text-primary font-semibold">Hello, <NavLink URL={`/profile/${userContext.user.id}`} >{userContext.user.username}</NavLink></p>
-                                        <Button type="button" style="normal" onClick={() => userContext.logoutUser()}>Logout</Button>
+                                        <p className="text-primary font-semibold">Hello, <NavLink URL={`/profile/${user.id}`} >{user.username}</NavLink></p>
+                                        <Button type="button" style="normal" onClick={() => logoutUser()}>Logout</Button>
                                     </div>
                                 </>
                             ) :

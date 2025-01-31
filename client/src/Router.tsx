@@ -1,4 +1,5 @@
 import Navbar from "@layout/Navbar";
+import UserProtectedRoutes from "@pages/UserProtectedRoutes";
 import { lazy } from "react";
 import { Route, Routes } from "react-router-dom";
 
@@ -20,14 +21,16 @@ function Router() {
       <Routes>
         <Route index element={<Home/>}/> 
         <Route path="/login" element={<Login/>} />
-        <Route path="/register" element={<Register/>} />
-        <Route path="/manage-decklist/:id?" element={<ManageDecklist/>} />
-        <Route path="/card/:id?" element={<Card/>} />
-        <Route path="/manage-cards" element={<ManageCards/>} />
-        <Route path="/decklist/:id" element={<SingleDecklist/>} />
-        <Route path="/decklists/:query?" element={<Decklists/>} />
-        <Route path="/edit-profile/:id" element={<EditProfile />} />
-        <Route path="/profile/:id" element={<Profile/>} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/decklists/:query?" element={<Decklists />} />
+        <Route path="/decklist/:id" element={<SingleDecklist />} />
+        <Route path="/profile/:id" element={<Profile />} />
+        <Route element={<UserProtectedRoutes/>}>
+          <Route path="/manage-decklist/:id?" element={<ManageDecklist/>} />
+          <Route path="/card/:id?" element={<Card/>} />
+          <Route path="/manage-cards" element={<ManageCards/>} />
+          <Route path="/edit-profile/:id" element={<EditProfile />} />
+        </Route>
       </Routes>
     </>
   )
